@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="35px" height="24px" viewBox="0 0 35 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <title>marker</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="marker" sketch:type="MSArtboardGroup" rx="2" ry="2">
+            <rect id="Rectangle-1" fill="#555555" opacity="0.2" x="3" y="21" width="29" height="1"></rect>
+            <rect id="Rectangle-1" fill="#{color}" x="3" y="1" width="29" height="20"></rect>
+            <text id="text" fill="#FFFFFF" sketch:type="MSTextLayer" font-family="Helvetica" font-size="11" font-weight="bold" >
+                <tspan x="17" y="15" text-anchor="middle">{text}</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

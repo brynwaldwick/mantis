@@ -1,0 +1,263 @@
+
+$padding
+    tight: 8px
+    default: 16px
+    medium: 24px
+    big: 36px
+    huge: 48px
+
+$colors
+    canvas: #f5f2ef
+    canvas_shade: #e6e6e5
+    green: #1CA968
+    green: rgba(#1CA968, 0.9)
+    mantis: rgba(97, 185, 41, 0.62)
+    pale_green: rgba(144, 204, 67, 0.45)
+    clear_text: rgba(0, 0, 0, 0.33)
+    light_gray: #D2D2D2
+    medium_gray: #767676
+    dark_gray: #4A4A4A
+    border: #dad7d3
+    border: #e6e6e5
+
+$fonts
+    default: 12px
+    big: 16px
+    mega: 24px
+
+$shadow
+    card: 0px 2px 2px rgba(197, 197, 197, 0.5)
+
+body
+    font: 15px/20px "Roboto"
+    background: $colors.canvas
+    font-size: $fonts.default
+    display: flex
+    flex-direction: column
+
+#map-canvas
+    height: 600px
+    border: 2px solid $colors.border
+
+.card
+    background: white
+    margin-bottom: $padding.default
+    padding: $padding.default
+    border-bottom: 2px solid $colors.border
+    border-radius: 2px
+
+.swatch
+    max-width: 30px
+    display: inline-block
+    padding: 3px 5px
+    color: white
+    border-radius: 5px
+    font-weight: 500
+
+#nav
+    //background: $colors.green
+    background: rgba(138, 185, 77, 0.41)
+    background: $colors.pale_green
+    position: absolute
+    top: 0px
+    left: 0px
+    right: 0px
+    height: 60px
+    display: flex
+    align-items: center
+    border-bottom: 2px solid $colors.border
+    border-bottom: 2px solid rgba(28, 169, 104, 0.9)
+    border-bottom: 2px solid rgba(28, 169, 104, 0.28)
+
+    .brand
+        display: inline-block
+        font-size: 20px
+        padding: 2px $padding.medium
+        padding-left: 0px
+        padding-right: 0px
+        color: $colors.green
+        font-weight: 500
+
+    .logo
+        padding-left: $padding.medium
+        max-height: 39px
+        position: relative
+        top: -1px
+        margin-right: $padding.tight
+
+    a
+        display: inline-block
+        font-size: 16px
+        padding: 2px 2px 2px 0px
+        color: rgba(28, 169, 104, 0.9)
+        font-weight: bold
+        margin-left: 19px
+
+        &.active
+            color: rgb(32, 144, 93)
+
+.content
+    a
+        color: $colors.green
+        font-size: $fonts.big
+        padding-right: $padding.default
+        margin-top: $padding.default
+        display: inline-block
+
+.page-nav
+    display: flex
+    align-content: center
+    padding-bottom: $padding.default
+
+    a
+        margin: 0px
+        align-self: center
+        cursor: pointer
+
+    h3
+        margin: 0px
+        align-self: center
+
+#app
+    margin-top: 60px
+    padding: $padding.default
+
+input, textarea, button
+    border: none
+    border-radius: 8px
+    border: 2px solid $colors.green
+    border: 2px solid rgb(152, 209, 145)
+
+    ::webkit-placeholder
+        color: $colors.border
+
+    &:active, &:focus
+        outline: none
+
+button
+    padding: $padding.tight $padding.default
+    margin: $padding.tight 0
+    background: $colors.pale_green
+    color: $colors.green
+    font-weight: 500
+    font-size: 14px
+    border: none
+    border-bottom: 2px solid $colors.green
+
+textarea
+    display: block
+    min-width: 350px
+    min-height: 250px
+    border-color: $colors.border
+    border: 2px solid rgb(152, 209, 145)
+
+
+.search-bar
+    margin: $padding.tight $padding.default
+    display: inline-block
+
+    input
+        padding: $padding.tight
+        font-size: $fonts.big
+
+.scrapes-page
+    .scrapes, #map-canvas
+        display: inline-block
+
+    .scrapes
+        width: 20%
+        max-height: 600px
+        overflow-y: scroll
+
+        .scrape
+            cursor: pointer
+            padding: $padding.tight $padding.default
+
+            h3
+                margin-top: 0px
+
+            h5
+                margin-bottom: 0px
+
+            &:hover
+                background: $colors.canvas_shade
+
+            border-bottom: 2px solid $colors.border
+
+            .field.third
+                width: 33%
+                display:inline-block
+
+    #map-canvas
+        width: 79%
+
+.scrapes
+
+    .scrapes-list
+        vertical-align: top
+        background: $colors.light_gray
+        background: $colors.green
+        display: inline-block
+        padding: $padding.default
+        margin-right: $padding.default
+        box-shadow: $shadow.card
+        border-radius: 3px
+        width: 236px
+
+        h3
+            color: white
+
+        .search
+            display: flex
+            flex-grow: 1
+            flex-direction: column
+            background: white
+            border-radius: 3px
+            box-shadow: $shadow.card
+            margin-bottom: $padding.tight
+            padding: $padding.default
+
+            .field
+                display: block
+                padding: $padding.tight 0
+
+            i
+                color: $colors.medium_gray
+                padding-right: $padding.default
+
+.result-key
+    font-weight: bold
+
+.field-page
+
+    .field-details
+        display: flex
+        flex-direction: column
+
+    .field-weights
+        display: flex
+        flex-direction: row
+        flex-wrap: wrap
+
+    .model-aspect
+        display: flex
+        flex-direction: row
+        margin-right: $padding.default
+        align-items: center
+
+        .swatch, .result-key
+            align-self: flex-start
+            align-items: center
+            flex-direction:row
+
+        .swatch
+            margin-right: $padding.default
+            font-weight: 500
+
+        a
+            margin-top: 0px
+            text-decoration: none
+            font-size: 14px
+
+        .result-key
+            margin-top: 4px

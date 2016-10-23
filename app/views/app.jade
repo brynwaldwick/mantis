@@ -1,0 +1,29 @@
+doctype html5
+html(lang='en')
+    head
+        title Mantis
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        meta(name='apple-mobile-web-app-capable', content='yes')
+        meta(name='author', content='Prontotype')
+        link(href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css', rel='stylesheet')
+        link(href='//fonts.googleapis.com/css?family=Roboto:400,300,500,700', rel='stylesheet', type='text/css')
+        link(href='//fonts.googleapis.com/css?family=PT Serif:400,300,500,700', rel='stylesheet', type='text/css')
+        link(href='/css/app.css', rel='stylesheet')
+        link(href='/images/favicon.png', rel='shortcut icon')
+
+    body
+        #app
+
+    if user
+        script.
+            window.user = {
+                _id: "#{user._id}",
+                email: "#{user.email}"
+            };
+
+    script(src='/js/promise.js')
+    script(src='/js/fetch.js')
+    script(src='https://maps.googleapis.com/maps/api/js?key=#{maps_js_key}&libraries=places')
+
+    script(src='/js/app.js')
