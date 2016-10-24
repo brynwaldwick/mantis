@@ -254,15 +254,17 @@ fields = {
             'search:kfc:scrape:greater_hartford:results': 0.20
             "search:7_eleven:scrape:greater_hartford:results": 0.23
             "search:whole_foods:scrape:greater_hartford:results": 0.82
-            "search:walmart:scrape:greater_hartford:results": 0.4
+            #"search:walmart:scrape:greater_hartford:results": 0.4
             "search:schools:scrape:greater_hartford:results": 0.62
             "search:cheap_bars:scrape:greater_hartford:results": 0.2
             "search:nice_bars:scrape:greater_hartford:results": 0.71
+            "search:nice_restaurants:scrape:greater_hartford:results": 0.89
+            "search:cheap_restaurants:scrape:greater_hartford:restuls": 0.19
         }
 
-        NEIGHBORHOOD_THRESHOLD: 5
-        AREA_THRESHOLD: 35
-        GRID_RESOLUTION: 5
+        NEIGHBORHOOD_THRESHOLD: 3.5
+        AREA_THRESHOLD: 25
+        GRID_RESOLUTION: 7
     }
 
     '580bca6274123b782cfd7adc': {
@@ -289,26 +291,26 @@ fields = {
         
     }
 
-    # '580bd3be4a38b994f39ad8b4': {
-    #     model_id: '580bd3be4a38b994f39ad8b4'
-    #     name: "bar scene"
-    #     scrape: {
-    #         _id: 'sf-bay'
-    #         # bounds: [{lat: 37.7824742, lng: -122.5142652}, {lat: 37.284985, lng: -121.8502178}]
-    #         bounds: [{lat: 37.968378, lng: -122.5903596}, {lat: 37.2785229, lng: -121.6586587}]
-    #         x_by_y: [13, 11]
-    #         radius: 5000
-    #     }
+    '580bd3be4a38b994f39ad8b4': {
+        model_id: '580bd3be4a38b994f39ad8b4'
+        name: "bar scene"
+        scrape: {
+            _id: 'sf-bay'
+            # bounds: [{lat: 37.7824742, lng: -122.5142652}, {lat: 37.284985, lng: -121.8502178}]
+            bounds: [{lat: 37.968378, lng: -122.5903596}, {lat: 37.2785229, lng: -121.6586587}]
+            x_by_y: [13, 11]
+            radius: 5000
+        }
 
-    #     weights: {
-    #         "search:cheap_bars:scrape:sf-bay:results": 0.2
-    #         "search:nice_bars:scrape:sf-bay:results": 0.99
-    #     }
+        weights: {
+            "search:cheap_bars:scrape:sf-bay:results": 0.2
+            "search:nice_bars:scrape:sf-bay:results": 0.99
+        }
 
-    #     NEIGHBORHOOD_THRESHOLD: 1.5
-    #     AREA_THRESHOLD: 6
-    #     GRID_RESOLUTION: 5
-    # }
+        NEIGHBORHOOD_THRESHOLD: 1.5
+        AREA_THRESHOLD: 6
+        GRID_RESOLUTION: 5
+    }
 
     '580cf74911fb34f516d87b24': {
         model_id: '580cf74911fb34f516d87b24'
