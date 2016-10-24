@@ -140,8 +140,8 @@ fields = {
             'search:nice_restaurants:scrape:western_ma:results': 0.99
             'search:golf_courses:scrape:western_ma:results': 0.61
         }
-        NEIGHBORHOOD_THRESHOLD: 5
-        AREA_THRESHOLD: 30
+        D_2: 5
+        D_3: 30
         GRID_RESOLUTION: 3
     }
 
@@ -166,8 +166,8 @@ fields = {
     #         'search:cheap_bars:scrape:suffolk:results': 0.3
     #         # 'search:golf_courses:scrape:suffolk:results': 0.9
     #     }
-    #     NEIGHBORHOOD_THRESHOLD: 3
-    #     AREA_THRESHOLD: 15
+    #     D_2: 3
+    #     D_3: 15
     #     GRID_RESOLUTION: 5
     # }
 
@@ -186,8 +186,8 @@ fields = {
             'search:kfc:scrape:suffolk:results': 0.1
             # 'search:golf_courses:scrape:suffolk:results': 0.9
         }
-        NEIGHBORHOOD_THRESHOLD: 3
-        AREA_THRESHOLD: 7
+        D_2: 3
+        D_3: 7
         GRID_RESOLUTION: 5
     }
 
@@ -207,8 +207,8 @@ fields = {
             # 'search:whole_foods:scrape:greater_boston:results':0.8
             # 'search:golf_courses:scrape:suffolk:results': 0.9
         }
-        NEIGHBORHOOD_THRESHOLD: 2.5
-        AREA_THRESHOLD: 10
+        D_2: 2.5
+        D_3: 10
         GRID_RESOLUTION: 7
     }
 
@@ -229,8 +229,8 @@ fields = {
     #         'search:whole_foods:scrape:greater_boston:results':0.8
     #         # 'search:golf_courses:scrape:suffolk:results': 0.9
     #     }
-    #     NEIGHBORHOOD_THRESHOLD: 1
-    #     AREA_THRESHOLD: 4
+    #     D_2: 1
+    #     D_3: 4
     #     GRID_RESOLUTION: 8
     # }
 
@@ -262,8 +262,8 @@ fields = {
             "search:cheap_restaurants:scrape:greater_hartford:restuls": 0.19
         }
 
-        NEIGHBORHOOD_THRESHOLD: 3.5
-        AREA_THRESHOLD: 25
+        D_2: 3.5
+        D_3: 25
         GRID_RESOLUTION: 7
     }
 
@@ -285,8 +285,8 @@ fields = {
             "search:nice_restaurants:scrape:south-nh:results": 0.95
         }
 
-        NEIGHBORHOOD_THRESHOLD: 8
-        AREA_THRESHOLD: 20
+        D_2: 8
+        D_3: 20
         GRID_RESOLUTION: 5
         
     }
@@ -307,8 +307,8 @@ fields = {
             "search:nice_bars:scrape:sf-bay:results": 0.99
         }
 
-        NEIGHBORHOOD_THRESHOLD: 1.5
-        AREA_THRESHOLD: 6
+        D_2: 1.5
+        D_3: 6
         GRID_RESOLUTION: 5
     }
 
@@ -341,8 +341,8 @@ fields = {
             # 'search:dunkin:scrape:east_of_nyc:results': 0.5
         }
 
-        NEIGHBORHOOD_THRESHOLD: 4
-        AREA_THRESHOLD: 8
+        D_2: 4
+        D_3: 8
         GRID_RESOLUTION: 3
     }
 
@@ -375,8 +375,8 @@ fields = {
             # 'search:dunkin:scrape:east_of_nyc:results': 0.5
         }
 
-        NEIGHBORHOOD_THRESHOLD: 2
-        AREA_THRESHOLD: 8
+        D_2: 2
+        D_3: 8
         GRID_RESOLUTION: 3
     }
 
@@ -404,8 +404,8 @@ fields = {
             'search:nice_restaurants:scrape:newburgh_to_newhaven:results': 0.95
         }
 
-        NEIGHBORHOOD_THRESHOLD: 4
-        AREA_THRESHOLD: 20
+        D_2: 4
+        D_3: 20
         GRID_RESOLUTION: 3
     }
 
@@ -427,8 +427,8 @@ fields = {
             'search:apple_store:scrape:chicago:results': 0.9
         }
 
-        NEIGHBORHOOD_THRESHOLD: .5
-        AREA_THRESHOLD: 2
+        D_2: .5
+        D_3: 2
         GRID_RESOLUTION: 3
     }
 }
@@ -436,18 +436,18 @@ fields = {
 field_energies = {}
 
 # Proximity and max energy of a neighbor
-NEIGHBOR_THRESHOLD = 0.080
+D_1 = 0.080
 NEIGHBOR_ENERGY = 6
 
 # Proximity and max energy of something in the same area
-AREA_THRESHOLD = 10
+D_3 = 10
 AREA_ENERGY = 1
 
 buildFieldForModel = (model_id, arg, cb) ->
     DataService 'getModel', {_id: model_id}, (err, model) ->
         field = fields[model_id]
         console.log 'the field is', field
-        {scrape, weights, NEIGHBORHOOD_THRESHOLD, AREA_THRESHOLD, GRID_RESOLUTION} = field
+        {scrape, weights, D_2, D_3, GRID_RESOLUTION} = field
         async.map Object.keys(weights), loadResults, (err, results) ->
             # console.log results
 
@@ -486,22 +486,40 @@ buildFieldForModel = (model_id, arg, cb) ->
                 _energy_7 = 0
                 _energy_8 = 0
                 _energy_9 = 0
+
+                # Energy = {
+
+                    # Piecewise linear w/ 3 regimes
+                    # Neighbor constant
+                    # Neighborhood drops off w/ distance ^ 2
+                    # Area linear dropoff
+
+                    # if (d < D_1)
+                    #     NEIGHBOR_ENERGY
+                    # else if (d < D_2)
+                    #     Goes from E_neigh to E_area as d goes from d_neigh to d_hood
+                    #     E = AREA_ENERGY + (E_1 - E_2) / (d_2 - d_1) * (1 / (1 + d - d_2)^2)
+                    #  else if (d < AREA)
+                    #     Falls off linearly from d_hood to d_area
+                    #     E = AREA_ENERGY * (d_3 - d) / (d_3 - d_2) * (1 / (1 + d - d_2))
+                # }
                 
-                prefactor = ((NEIGHBOR_ENERGY - AREA_ENERGY) / (NEIGHBORHOOD_THRESHOLD - NEIGHBOR_THRESHOLD))
+                prefactor = ((NEIGHBOR_ENERGY - AREA_ENERGY) / (D_2 - D_1))
 
                 calculateEnergy = (distance, r) ->
                     _weight = (weights[r.key] || 0.5) - 0.5
-                    if Number(distance) < NEIGHBOR_THRESHOLD
+                    if Number(distance) < D_1
                         return NEIGHBOR_ENERGY * _weight
 
                     # Close-range (neighbors -> in the same)
-                    else if Number(distance) < NEIGHBORHOOD_THRESHOLD
+                    else if Number(distance) < D_2
                         # if weights[r.key] > 0.5
-                        return _weight * (AREA_ENERGY + prefactor * 1/(Math.pow(1 + (distance - NEIGHBOR_THRESHOLD), 2)))
+                        return _weight * (AREA_ENERGY + prefactor * 1/(Math.pow(1 + (distance - D_1), 2)))
 
                     # Mid-range
-                    else if Number(distance) < AREA_THRESHOLD
-                        return _weight * AREA_ENERGY * 1/(Math.pow(1 + (distance - NEIGHBORHOOD_THRESHOLD), 1))
+                    else if Number(distance) < D_3
+                        prefactor_2 = (D_3 - distance) / (D_3 - D_2)
+                        return _weight * AREA_ENERGY * prefactor_2 * 1/(Math.pow(1 + (distance - D_2), 1))
 
                     else
                         return 0
