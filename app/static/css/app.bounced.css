@@ -27,6 +27,11 @@ body {
   border-radius: 2px;
 }
 
+.card.inactive {
+  background: #D2D2D2;
+  color: #4A4A4A;
+}
+
 .swatch {
   max-width: 30px;
   display: inline-block;
@@ -34,6 +39,7 @@ body {
   color: white;
   border-radius: 5px;
   font-weight: 500;
+  cursor: pointer;
 }
 
 #nav {

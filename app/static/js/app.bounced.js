@@ -200,7 +200,8 @@ module.exports = {
 
 
 },{"react":239}],3:[function(require,module,exports){
-var Dispatcher, FieldPage, KefirBus, LatLng, Link, Map, React, ScrapeSummary, fetch$;
+var Dispatcher, FieldPage, KefirBus, LatLng, Link, Map, React, ScrapeSummary, fetch$,
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 React = require('react');
 
@@ -233,7 +234,8 @@ FieldPage = React.createClass({
   getInitialState: function() {
     return {
       field: {},
-      energies: []
+      energies: [],
+      selected: {}
     };
   },
   componentDidMount: function() {
@@ -268,10 +270,33 @@ FieldPage = React.createClass({
     });
   },
   foundField: function(energies) {
-    Map.renderField(energies);
+    var selected;
+    selected = Object.keys(energies[0].energies);
+    Map.renderField(energies, selected);
     return this.setState({
-      energies: energies
+      energies: energies,
+      selected: selected
     });
+  },
+  toggleSelected: function(selected) {
+    return (function(_this) {
+      return function() {
+        var _selected;
+        Map.clearField();
+        if (_this.state.selected.indexOf(selected) > -1) {
+          _selected = _this.state.selected.filter(function(s) {
+            return s !== selected;
+          });
+        } else {
+          _selected = _this.state.selected.concat([selected]);
+        }
+        return _this.setState({
+          selected: _selected
+        }, function() {
+          return Map.renderField(_this.state.energies, _this.state.selected);
+        });
+      };
+    })(this);
   },
   render: function() {
     return React.createElement("div", {
@@ -299,28 +324,32 @@ FieldPage = React.createClass({
   renderWeights: function(field_spec) {
     return React.createElement("div", {
       "className": 'field-weights'
-    }, Object.keys(field_spec.weights).map(function(w_k, i) {
-      var color, opacity, styles, weight;
-      weight = field_spec.weights[w_k];
-      color = weight === 0.5 ? "rgba(33, 33, 33, 1)" : weight < 0.5 ? "rgba(255, 0, 0, 1)" : "rgba(0, 0, 255, 1)";
-      opacity = Math.abs(weight - 0.5) + 0.27;
-      styles = {
-        backgroundColor: color.replace('1)', "" + opacity + ")"),
-        color: "white"
+    }, Object.keys(field_spec.weights).map((function(_this) {
+      return function(w_k, i) {
+        var active, color, opacity, styles, weight;
+        weight = field_spec.weights[w_k];
+        color = weight === 0.5 ? "rgba(33, 33, 33, 1)" : weight < 0.5 ? "rgba(255, 0, 0, 1)" : "rgba(0, 0, 255, 1)";
+        opacity = Math.abs(weight - 0.5) + 0.27;
+        styles = {
+          backgroundColor: color.replace('1)', "" + opacity + ")"),
+          color: "white"
+        };
+        color = weight < 0.5 ? field_spec.weights[w_k] : void 0;
+        active = __indexOf.call(_this.state.selected, w_k) >= 0 ? '' : 'inactive';
+        return React.createElement("div", {
+          "className": "card model-aspect " + active,
+          "key": i
+        }, React.createElement("div", {
+          "className": 'swatch',
+          "onClick": _this.toggleSelected(w_k),
+          "style": styles
+        }, field_spec.weights[w_k].toFixed(2)), React.createElement(Link, {
+          "to": "/results/" + w_k
+        }, React.createElement("div", {
+          "className": 'result-key'
+        }, w_k)));
       };
-      color = weight < 0.5 ? field_spec.weights[w_k] : void 0;
-      return React.createElement("div", {
-        "className": 'card model-aspect',
-        "key": i
-      }, React.createElement("div", {
-        "className": 'swatch',
-        "style": styles
-      }, field_spec.weights[w_k].toFixed(2)), React.createElement(Link, {
-        "to": "/results/" + w_k
-      }, React.createElement("div", {
-        "className": 'result-key'
-      }, w_k)));
-    }));
+    })(this)));
   }
 });
 
@@ -407,7 +436,8 @@ module.exports = FieldsPage;
 
 
 },{"./common":2,"./map":5,"kefir-bus":241,"kefir-fetch":242,"react":239,"react-router":43}],5:[function(require,module,exports){
-var KefirBus, MAX_ZOOM, MIN_ZOOM, Map, React, ReactDOM, divideByN, sf_lat_lng, _;
+var KefirBus, MAX_ZOOM, MIN_ZOOM, Map, React, ReactDOM, divideByN, sf_lat_lng, _,
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 React = require('react');
 
@@ -540,13 +570,26 @@ Map.renderScrape = function(scrape) {
   return Map.zoomToBounds();
 };
 
-Map.renderField = function(field) {
+Map.renderField = function(field, selected) {
   var cubeRt, d_lat, d_lng, energies, lats, lngs, max_energy, min_energy;
-  energies = _.pluck(field, 'energy');
+  energies = _.pluck(field, 'energies').map(function(e_object) {
+    var _result;
+    _result = 0;
+    Object.keys(e_object).map(function(v) {
+      if (__indexOf.call(selected, v) >= 0) {
+        return _result += e_object[v];
+      }
+    });
+    return _result;
+  });
+  console.log(energies);
+  energies = _.flatten(energies);
   lats = _.uniq(_.pluck(field, 'lat'));
   lngs = _.uniq(_.pluck(field, 'lng'));
   max_energy = _.max(energies);
   min_energy = _.min(energies);
+  console.log(max_energy);
+  console.log(min_energy);
   d_lng = field[0].lng - field[1].lng;
   d_lat = field[lngs.length].lat - field[0].lat;
   lats.map(function(lat, i) {
@@ -554,7 +597,7 @@ Map.renderField = function(field) {
   });
   cubeRt = function(x) {
     var sign;
-    if (x = 0) {
+    if (x === 0) {
       sign = 0;
     } else if (x > 0) {
       sign;
@@ -562,13 +605,19 @@ Map.renderField = function(field) {
     return sign * Math.pow(Math.abs(x), 1 / 3);
   };
   field.map(function(f, i) {
-    var background, rectangle, _ref, _ref1, _ref2, _ref3;
+    var background, rectangle, _energy, _ref, _ref1, _ref2, _ref3;
+    _energy = 0;
+    Object.keys(f.energies).map(function(e) {
+      if (__indexOf.call(selected, e) >= 0) {
+        return _energy += f.energies[e];
+      }
+    });
     rectangle = new google.maps.Rectangle({
-      strokeColor: (f.energy < 0 ? '#FF0000' : 'blue'),
-      strokeOpacity: f.energy > 0 ? 0.5 * f.energy / max_energy : 0.65 * f.energy / min_energy + 0.02,
+      strokeColor: (_energy < 0 ? '#FF0000' : 'blue'),
+      strokeOpacity: _energy > 0 ? 0.5 * _energy / max_energy : 0.65 * _energy / min_energy + 0.02,
       strokeWeight: 1,
-      fillColor: (f.energy < 0 ? '#FF0000' : 'blue'),
-      fillOpacity: f.energy > 0 ? 0.9 * f.energy / max_energy + 0.02 : 0.98 * f.energy / max_energy + 0.1,
+      fillColor: (_energy < 0 ? '#FF0000' : 'blue'),
+      fillOpacity: _energy > 0 ? 0.9 * _energy / max_energy + 0.02 : 0.98 * _energy / max_energy + 0.1,
       map: Map.google_map,
       bounds: {
         north: ((_ref = field[i + lngs.length]) != null ? _ref.lat : void 0) || f.lat + d_lat,
@@ -578,8 +627,8 @@ Map.renderField = function(field) {
       }
     });
     background = new google.maps.Rectangle({
-      strokeColor: Math.abs(f.energy) > 0.8 ? (f.energy < 0 ? '#FF0000' : '#90cc43') : "#aaa",
-      strokeOpacity: Math.abs(0.25 * cubeRt(f.energy / max_energy)),
+      strokeColor: Math.abs(_energy) > 0.8 ? (_energy < 0 ? '#FF0000' : '#90cc43') : "#aaa",
+      strokeOpacity: Math.abs(0.25 * cubeRt(_energy / max_energy)),
       strokeWeight: 1,
       fillOpacity: 0.1,
       fillColor: "#bbb",
