@@ -41,7 +41,6 @@ saveResults = (search, scrape, results, cb) ->
     # TODO: push into results set
     result_ids = _.pluck results, '_id' #TODO: perhaps just do the place_id
     results_key = "search:#{search._id}:scrape:#{scrape._id}:results"
-    console.log result_ids
     if result_ids.length
         redis.sadd results_key, result_ids...
     cb null, result_ids
@@ -113,7 +112,7 @@ DataService 'findScrapes', {}, (err, scrapes) ->
         console.log scrapes, scrapes.length
         console.log searches, searches.length
     #     err, resp
-        doScrapedSearch searches[18], scrapes[9], ->
+        # doScrapedSearch searches[26], scrapes[10], ->
             # process.exit()
 
 findResultsForScrape = (scrape_key, cb) ->

@@ -106,6 +106,11 @@ scrapes = [
     bounds: [{lat: 42.8976389, lng: -71.7524307}, {lat: 41.557141, lng: -70.4045467}]
     x_by_y: [11, 15]
     radius: 7200
+,
+    _id: 'chicago'
+    bounds: [{lat: 42.05556, lng: -87.979514}, {lat: 41.62945, lng: -87.49268}]
+    x_by_y: [10, 12]
+    radius: 2900
 ]
 
 data_methods.findScrapes = (query, cb) ->
@@ -242,7 +247,24 @@ searches = [
         type: 'restaurant'
     filter: (p) ->
         return p.name.match(/mcdonald/i)?
+,
+    _id: 'metro_pcs'
+    query_parts:
+        keyword: 'metro pcs'
+    filter: (p) ->
+        return p.name.match(/metropcs/i)?
+,
+    _id: 'apple_store'
+    query_parts:
+        keyword: 'apple store'
+    filter: (p) ->
+        return p.name.match(/apple/i)?
 ]
+
+# "market basket"
+# nail salons / massage, barber shops
+# panera
+# cheescake factory
 
 data_methods.findSearches = (query, cb) ->
     cb null, searches

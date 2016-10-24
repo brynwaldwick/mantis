@@ -247,14 +247,14 @@ fields = {
 
         weights: {
             # "search:tesla:scrape:greater_hartford:results": 0.5
-            # "search:trader_joes:scrape:greater_hartford:results": 0.5
+            "search:trader_joes:scrape:greater_hartford:results": 0.5
             # "search:western_union:scrape:greater_hartford:results": 0.5
             # "search:dunkin:scrape:greater_hartford:results": 0.5
             'search:mcdonalds:scrape:greater_hartford:results': 0.31
             'search:kfc:scrape:greater_hartford:results': 0.20
             "search:7_eleven:scrape:greater_hartford:results": 0.23
             "search:whole_foods:scrape:greater_hartford:results": 0.82
-            "search:walmart:scrape:greater_hartford:results": 0.21
+            "search:walmart:scrape:greater_hartford:results": 0.4
             "search:schools:scrape:greater_hartford:results": 0.62
             "search:cheap_bars:scrape:greater_hartford:results": 0.2
             "search:nice_bars:scrape:greater_hartford:results": 0.71
@@ -406,12 +406,35 @@ fields = {
         AREA_THRESHOLD: 20
         GRID_RESOLUTION: 3
     }
+
+    '580d69537335fc034e4ff380': {
+        model_id: '580d69537335fc034e4ff380'
+        name: 'starbucks & apple store vs kfc & metro pcs'
+
+        scrape: {
+            _id: 'chicago'
+            bounds: [{lat: 42.05556, lng: -87.979514}, {lat: 41.62945, lng: -87.49268}]
+            x_by_y: [10, 12]
+            radius: 2900
+        }   
+
+        weights: {
+            'search:kfc:scrape:chicago:results': 0.35
+            'search:starbucks:scrape:chicago:results': 0.68
+            'search:metro_pcs:scrape:chicago:results': 0.39
+            'search:apple_store:scrape:chicago:results': 0.9
+        }
+
+        NEIGHBORHOOD_THRESHOLD: .5
+        AREA_THRESHOLD: 2
+        GRID_RESOLUTION: 3
+    }
 }
 
 field_energies = {}
 
 # Proximity and max energy of a neighbor
-NEIGHBOR_THRESHOLD = 0.2
+NEIGHBOR_THRESHOLD = 0.080
 NEIGHBOR_ENERGY = 6
 
 # Proximity and max energy of something in the same area
