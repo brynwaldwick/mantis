@@ -84,6 +84,8 @@ Models =
 
         return result[0..n-1]
 
+cached_results = {}
+
 loadResults = (result_key, cb) ->
     ScrapeService 'findResultsForScrape', result_key, (err, results) ->
         results.filter((r) -> r != 'undefined').map (r) ->
@@ -93,9 +95,16 @@ loadResults = (result_key, cb) ->
 buildFeaturesForModel = (model_id, model_transform, lat_lng, cb) ->
     DataService 'getModel', {_id: model_id}, (err, model) ->
         console.log 'the model', model
-        async.map model.result_keys, loadResults, (err, results) ->
-            results = _.flatten results
-            results.map (r) -> r.distance = h.distanceBtw lat_lng, r.geometry.location
+        if !cached_results[model_id]?
+            async.map model.result_keys, loadResults, (err, results) ->
+                results = _.flatten results
+                cached_results[model_id] ||= []
+                cached_results[model_id] = results
+                results.map (r) -> r.distance = h.distanceBtw lat_lng, r.geometry.location
+
+                cb null, Models[model_transform](lat_lng, results, model.result_keys)
+        else
+            results = cached_results[model_id]
             cb null, Models[model_transform](lat_lng, results, model.result_keys)
 
 buildFeaturesForModelWArg = (model_id, model_transform, lat_lng, arg, cb) ->
@@ -104,7 +113,6 @@ buildFeaturesForModelWArg = (model_id, model_transform, lat_lng, arg, cb) ->
         async.map model.result_keys, loadResults, (err, results) ->
             results = _.flatten results
             results.map (r) -> r.distance = h.distanceBtw lat_lng, r.geometry.location
-            console.log model_transform
             cb null, Models[model_transform](lat_lng, results, model.result_keys, arg)
 
 
@@ -196,7 +204,7 @@ fields = {
         weights: {
             'search:starbucks:scrape:greater_boston:results': 0.8
             'search:kfc:scrape:greater_boston:results': 0.2
-            'search:whole_foods:scrape:greater_boston:results':0.8
+            # 'search:whole_foods:scrape:greater_boston:results':0.8
             # 'search:golf_courses:scrape:suffolk:results': 0.9
         }
         NEIGHBORHOOD_THRESHOLD: 2.5
@@ -431,14 +439,14 @@ buildFieldForModel = (model_id, arg, cb) ->
                 if i++ % 1000 == 0
                     console.log i
 
-                mid_point = {lat: (g.lat + delta_lat/2), lng: (g.lng + delta_lng/2)}
+                mid_point = {lat: (g.lat + delta_lat / (2*GRID_RESOLUTION)), lng: (g.lng + delta_lng/(2*GRID_RESOLUTION))}
                 top_right = {lat: (g.lat + delta_lat), lng: (g.lng + delta_lng)}
-                top_center = {lat: (g.lat + delta_lat), lng: (g.lng + delta_lng/2)}
+                top_center = {lat: (g.lat + delta_lat), lng: (g.lng + delta_lng/(2*GRID_RESOLUTION))}
                 top_left = {lat: (g.lat + delta_lat), lng: (g.lng)}
                 bottom_right = {lat: (g.lat), lng: (g.lng + delta_lng)}
-                bottom_center = {lat: (g.lat), lng: (g.lng + delta_lng/2)}
-                center_left = {lat: (g.lat + delta_lat/2), lng: (g.lng)}
-                center_right = {lat: (g.lat + delta_lat/2), lng: (g.lng + delta_lng)}
+                bottom_center = {lat: (g.lat), lng: (g.lng + delta_lng/(2*GRID_RESOLUTION))}
+                center_left = {lat: (g.lat + delta_lat/(2*GRID_RESOLUTION)), lng: (g.lng)}
+                center_right = {lat: (g.lat + delta_lat/(2*GRID_RESOLUTION)), lng: (g.lng + delta_lng)}
 
 
                 # physical name for parameter which I think is "loss function"
