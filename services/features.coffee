@@ -114,6 +114,8 @@ buildFeaturesForModelWArg = (model_id, model_transform, lat_lng, arg, cb) ->
 
             async.map model.result_keys, loadResults, (err, results) ->
                 results = _.flatten results
+                cached_results[model_id] ||= []
+                cached_results[model_id] = results
                 results.map (r) -> r.distance = h.distanceBtw lat_lng, r.geometry.location
                 cb null, Models[model_transform](lat_lng, results, model.result_keys, arg)
         else
@@ -450,7 +452,7 @@ AREA_ENERGY = 1
 buildFieldForModel = (model_id, arg, cb) ->
     DataService 'getModel', {_id: model_id}, (err, model) ->
         field = fields[model_id]
-        console.log 'the field is', field
+        # console.log 'the field is', field
         {scrape, weights, D_2, D_3, GRID_RESOLUTION} = field
         async.map Object.keys(weights), loadResults, (err, results) ->
             # console.log results
@@ -600,7 +602,7 @@ setTimeout =>
 
     buildModelField = (i) -> 
         buildFieldForModel model_ids[i], 'tes', (err, resp) -> #...
-            console.log err, resp
+            # console.log err, resp
             if model_ids[i+1]
                 buildModelField i + 1
 
