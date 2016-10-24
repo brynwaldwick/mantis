@@ -24,6 +24,7 @@ FieldPage = React.createClass
     getInitialState: ->
         field: {}
         energies: []
+        selected: {}
 
     componentDidMount: ->
         Map.initializeMap()
@@ -52,8 +53,20 @@ FieldPage = React.createClass
         @setState {field}
 
     foundField: (energies) ->
-        Map.renderField energies
-        @setState {energies}
+        selected = Object.keys(energies[0].energies)
+        Map.renderField energies, selected
+        @setState {energies, selected}
+
+    toggleSelected: (selected) -> =>
+        Map.clearField()
+        if @state.selected.indexOf(selected) > -1
+            _selected = @state.selected.filter (s) -> s != selected
+        else
+            _selected = @state.selected.concat [selected]
+
+        @setState {selected: _selected}, =>
+            Map.renderField @state.energies, @state.selected
+
 
     render: ->
         <div className='field-page'>
@@ -80,7 +93,7 @@ FieldPage = React.createClass
 
     renderWeights: (field_spec) ->
         <div className='field-weights'>
-            {Object.keys(field_spec.weights).map (w_k, i) ->
+            {Object.keys(field_spec.weights).map (w_k, i) =>
                 weight = field_spec.weights[w_k]
                 color = if weight == 0.5 then "rgba(33, 33, 33, 1)" else if weight < 0.5 then "rgba(255, 0, 0, 1)" else "rgba(0, 0, 255, 1)"
                 opacity = Math.abs(weight - 0.5) + 0.27
@@ -92,8 +105,9 @@ FieldPage = React.createClass
                 }
 
                 color = if weight < 0.5 then field_spec.weights[w_k]
-                <div className='card model-aspect' key=i >
-                    <div className='swatch' style={styles} >{field_spec.weights[w_k].toFixed(2)}</div>
+                active = if w_k in @state.selected then '' else 'inactive'
+                <div className="card model-aspect #{active}" key=i >
+                    <div className='swatch' onClick=@toggleSelected(w_k) style={styles} >{field_spec.weights[w_k].toFixed(2)}</div>
                     <Link to="/results/#{w_k}">
                         <div className='result-key'>{w_k}</div>
                     </Link>

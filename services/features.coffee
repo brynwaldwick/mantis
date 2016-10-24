@@ -110,11 +110,15 @@ buildFeaturesForModel = (model_id, model_transform, lat_lng, cb) ->
 buildFeaturesForModelWArg = (model_id, model_transform, lat_lng, arg, cb) ->
     DataService 'getModel', {_id: model_id}, (err, model) ->
         console.log 'the model', model
-        async.map model.result_keys, loadResults, (err, results) ->
-            results = _.flatten results
-            results.map (r) -> r.distance = h.distanceBtw lat_lng, r.geometry.location
-            cb null, Models[model_transform](lat_lng, results, model.result_keys, arg)
+        if !cached_results[model_id]?
 
+            async.map model.result_keys, loadResults, (err, results) ->
+                results = _.flatten results
+                results.map (r) -> r.distance = h.distanceBtw lat_lng, r.geometry.location
+                cb null, Models[model_transform](lat_lng, results, model.result_keys, arg)
+        else
+            results = cached_results[model_id]
+            cb null, Models[model_transform](lat_lng, results, model.result_keys, arg)
 
 # stabucks vs kfc - two queries applied to a scrape and weighted into a field
 
@@ -145,8 +149,34 @@ fields = {
         GRID_RESOLUTION: 3
     }
 
+    # # '580a92d05217628480b5ca53': {
+    # #     name: "SWPL"
+
+    # #     model_id: '580a92d05217628480b5ca53'
+    # #     scrape: {
+    # #         _id: 'suffolk'
+    # #         bounds: [{lat: 41.0531356, lng: -73.5027429}, {lat: 40.7856414, lng: -71.9845888}]
+    # #         x_by_y: [10, 4]
+    # #         radius: 7000
+    # #     }
+    # #     weights: {
+    # #         'search:schools:scrape:suffolk:results': 0.55
+    # #         'search:dunkin:scrape:suffolk:results': 0.5#0.78
+    # #         'search:yoga:scrape:suffolk:results': 0.5#0.95
+    # #         'search:walmart:scrape:suffolk:results': 0.2#0.1
+    # #         # 'search:churches:scrape:suffolk:results': 0.5#0.65
+    # #         'search:nice_restaurants:scrape:suffolk:results': 0.85
+    # #         'search:nice_bars:scrape:suffolk:results': 0.8
+    # #         'search:cheap_bars:scrape:suffolk:results': 0.3
+    # #         # 'search:golf_courses:scrape:suffolk:results': 0.9
+    # #     }
+    # #     D_2: 3
+    # #     D_3: 15
+    # #     GRID_RESOLUTION: 5
+    # # }
+
     # '580a92d05217628480b5ca53': {
-    #     name: "SWPL"
+    #     name: "starbucks vs kfc"
 
     #     model_id: '580a92d05217628480b5ca53'
     #     scrape: {
@@ -156,40 +186,14 @@ fields = {
     #         radius: 7000
     #     }
     #     weights: {
-    #         'search:schools:scrape:suffolk:results': 0.55
-    #         'search:dunkin:scrape:suffolk:results': 0.5#0.78
-    #         'search:yoga:scrape:suffolk:results': 0.5#0.95
-    #         'search:walmart:scrape:suffolk:results': 0.2#0.1
-    #         # 'search:churches:scrape:suffolk:results': 0.5#0.65
-    #         'search:nice_restaurants:scrape:suffolk:results': 0.85
-    #         'search:nice_bars:scrape:suffolk:results': 0.8
-    #         'search:cheap_bars:scrape:suffolk:results': 0.3
+    #         'search:starbucks:scrape:suffolk:results': 0.61
+    #         'search:kfc:scrape:suffolk:results': 0.1
     #         # 'search:golf_courses:scrape:suffolk:results': 0.9
     #     }
     #     D_2: 3
-    #     D_3: 15
+    #     D_3: 7
     #     GRID_RESOLUTION: 5
     # }
-
-    '580a92d05217628480b5ca53': {
-        name: "starbucks vs kfc"
-
-        model_id: '580a92d05217628480b5ca53'
-        scrape: {
-            _id: 'suffolk'
-            bounds: [{lat: 41.0531356, lng: -73.5027429}, {lat: 40.7856414, lng: -71.9845888}]
-            x_by_y: [10, 4]
-            radius: 7000
-        }
-        weights: {
-            'search:starbucks:scrape:suffolk:results': 0.61
-            'search:kfc:scrape:suffolk:results': 0.1
-            # 'search:golf_courses:scrape:suffolk:results': 0.9
-        }
-        D_2: 3
-        D_3: 7
-        GRID_RESOLUTION: 5
-    }
 
     '580d2fbbb938becb39d68a23': {
         name: "starbucks vs kfc"
@@ -229,8 +233,8 @@ fields = {
     #         'search:whole_foods:scrape:greater_boston:results':0.8
     #         # 'search:golf_courses:scrape:suffolk:results': 0.9
     #     }
-    #     D_2: 1
-    #     D_3: 4
+    #     D_2: .5
+    #     D_3: 2.5
     #     GRID_RESOLUTION: 8
     # }
 
@@ -263,54 +267,54 @@ fields = {
         }
 
         D_2: 3.5
-        D_3: 25
+        D_3: 20
         GRID_RESOLUTION: 7
     }
 
-    '580bca6274123b782cfd7adc': {
-        model_id: '580bca6274123b782cfd7adc'
-        name: "SWPL"
-        scrape: {   
-            _id: 'south-nh'
-            bounds: [{lat: 43.3374274, lng: -72.4366317}, {lat: 42.7113678, lng: -70.5810596}]
-            x_by_y: [11, 8]
-            radius: 8800
-        }
+    # '580bca6274123b782cfd7adc': {
+    #     model_id: '580bca6274123b782cfd7adc'
+    #     name: "SWPL"
+    #     scrape: {   
+    #         _id: 'south-nh'
+    #         bounds: [{lat: 43.3374274, lng: -72.4366317}, {lat: 42.7113678, lng: -70.5810596}]
+    #         x_by_y: [11, 8]
+    #         radius: 8800
+    #     }
 
-        weights: {
-            "search:trader_joes:scrape:south-nh:results": 0.85
-            "search:churches:scrape:south-nh:results": 0.5
-            "search:cafes:scrape:south-nh:results": 0.62
-            "search:walmart:scrape:south-nh:results": 0.31
-            "search:nice_restaurants:scrape:south-nh:results": 0.95
-        }
+    #     weights: {
+    #         "search:trader_joes:scrape:south-nh:results": 0.85
+    #         "search:churches:scrape:south-nh:results": 0.5
+    #         "search:cafes:scrape:south-nh:results": 0.62
+    #         "search:walmart:scrape:south-nh:results": 0.31
+    #         "search:nice_restaurants:scrape:south-nh:results": 0.95
+    #     }
 
-        D_2: 8
-        D_3: 20
-        GRID_RESOLUTION: 5
+    #     D_2: 8
+    #     D_3: 20
+    #     GRID_RESOLUTION: 5
         
-    }
+    # }
 
-    '580bd3be4a38b994f39ad8b4': {
-        model_id: '580bd3be4a38b994f39ad8b4'
-        name: "bar scene"
-        scrape: {
-            _id: 'sf-bay'
-            # bounds: [{lat: 37.7824742, lng: -122.5142652}, {lat: 37.284985, lng: -121.8502178}]
-            bounds: [{lat: 37.968378, lng: -122.5903596}, {lat: 37.2785229, lng: -121.6586587}]
-            x_by_y: [13, 11]
-            radius: 5000
-        }
+    # '580bd3be4a38b994f39ad8b4': {
+    #     model_id: '580bd3be4a38b994f39ad8b4'
+    #     name: "bar scene"
+    #     scrape: {
+    #         _id: 'sf-bay'
+    #         # bounds: [{lat: 37.7824742, lng: -122.5142652}, {lat: 37.284985, lng: -121.8502178}]
+    #         bounds: [{lat: 37.968378, lng: -122.5903596}, {lat: 37.2785229, lng: -121.6586587}]
+    #         x_by_y: [13, 11]
+    #         radius: 5000
+    #     }
 
-        weights: {
-            "search:cheap_bars:scrape:sf-bay:results": 0.2
-            "search:nice_bars:scrape:sf-bay:results": 0.99
-        }
+    #     weights: {
+    #         "search:cheap_bars:scrape:sf-bay:results": 0.2
+    #         "search:nice_bars:scrape:sf-bay:results": 0.99
+    #     }
 
-        D_2: 1.5
-        D_3: 6
-        GRID_RESOLUTION: 5
-    }
+    #     D_2: 1.5
+    #     D_3: 6
+    #     GRID_RESOLUTION: 5
+    # }
 
     '580cf74911fb34f516d87b24': {
         model_id: '580cf74911fb34f516d87b24'
@@ -427,8 +431,8 @@ fields = {
             'search:apple_store:scrape:chicago:results': 0.9
         }
 
-        D_2: .5
-        D_3: 2
+        D_2: 2.5
+        D_3: 7
         GRID_RESOLUTION: 3
     }
 }
@@ -489,10 +493,14 @@ buildFieldForModel = (model_id, arg, cb) ->
 
                 # Energy = {
 
-                    # Piecewise linear w/ 3 regimes
-                    # Neighbor constant
-                    # Neighborhood drops off w/ distance ^ 2
-                    # Area linear dropoff
+                    # Marker    D_1 (is a neighbor)      D_2 (in the neighborhood)          D_3 (in the area)
+                    #   | ------ | ---------------------- | -------------------------------- | ---------------
+
+                    # Piecewise w/ 3 regimes
+                    # d < D_1 constant
+                    # D_1 < d < D_2 drops off w/ distance ^ 2
+                    # D_2 < d < D_3 linear dropoff
+                    # D_3 < d 0
 
                     # if (d < D_1)
                     #     NEIGHBOR_ENERGY
@@ -562,13 +570,26 @@ buildFieldForModel = (model_id, arg, cb) ->
                     distance = calculateDistance r, center_left
                     _energy_9 += calculateEnergy distance, r
 
+                keyed_results = _.groupBy closest_results[0..100], (p) -> p.key
+
                 # Calculating at bottom-left and midpoint of each square to avg. out
                 # lucky binks of very close locations.
                 closest_results[0..100].map (r) ->
-
-                    calculateCellEnergy r
-
-                g.energy = ((_energy_1 / 2) + (_energy_2 * 2) + (_energy_3 / 2) + (_energy_4 / 2) + (_energy_5 / 2) + _energy_6 + _energy_7 + _energy_8 + _energy_9) / 8
+                g.energies = {}
+                Object.keys(keyed_results).map (r_k) ->
+                    _energy_1 = 0
+                    _energy_2 = 0
+                    _energy_3 = 0
+                    _energy_4 = 0
+                    _energy_5 = 0
+                    _energy_6 = 0
+                    _energy_7 = 0
+                    _energy_8 = 0
+                    _energy_9 = 0
+                    keyed_results[r_k].map (r) ->
+                        calculateCellEnergy r
+                    g.energies[r_k] = ((_energy_1 / 2) + (_energy_2 * 2) + (_energy_3 / 2) + (_energy_4 / 2) + (_energy_5 / 2) + _energy_6 + _energy_7 + _energy_8 + _energy_9) / 8
+                # g.energy = ((_energy_1 / 2) + (_energy_2 * 2) + (_energy_3 / 2) + (_energy_4 / 2) + (_energy_5 / 2) + _energy_6 + _energy_7 + _energy_8 + _energy_9) / 8
             field_energies[model_id] ||= []
             field_energies[model_id] = _grid
             cb null, _grid

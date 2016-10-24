@@ -93,32 +93,53 @@ Map.renderScrape = (scrape) ->
             Map.bounds.extend scrapeCircle.center
     Map.zoomToBounds()
 
-Map.renderField = (field) ->
-    energies = _.pluck field, 'energy'
+Map.renderField = (field, selected) ->
+    energies = _.pluck(field, 'energies').map (e_object) ->
+        _result = 0
+        Object.keys(e_object).map (v) ->
+            if v in selected
+                _result += e_object[v]
+
+        return _result;
+    console.log energies
+
+    energies = _.flatten energies
+    # energies = _.pluck(field, 'energy')
     lats = _.uniq _.pluck(field, 'lat')
     lngs = _.uniq _.pluck(field, 'lng')
     max_energy = _.max energies
     min_energy = _.min energies
+    console.log max_energy
+    console.log min_energy
     d_lng = field[0].lng - field[1].lng
     d_lat = field[lngs.length].lat - field[0].lat
 
     lats.map (lat, i) ->
         lngs.map (lng, j) ->
     cubeRt = (x) ->
-        if x = 0
+        if x == 0
             sign = 0
         else if x > 0
             sign
         return sign * Math.pow(Math.abs(x), 1 / 3)
 
     field.map (f, i) ->
-
+        # f.energy = 0
+        _energy = 0
+        # _energy = f.energy
+        # console.log f.energies
+        Object.keys(f.energies).map (e) ->
+            # console.log e, console.log f.energies[e]
+            # console.log e
+            if e in selected
+                _energy += f.energies[e]
+        # console.log 'my final energy is', _energy
         rectangle = new google.maps.Rectangle {
-            strokeColor: (if f.energy < 0 then '#FF0000' else 'blue'),
-            strokeOpacity: if (f.energy > 0) then (0.5 * f.energy/(max_energy)) else (0.65 * f.energy/(min_energy) + 0.02),
+            strokeColor: (if _energy < 0 then '#FF0000' else 'blue'),
+            strokeOpacity: if (_energy > 0) then (0.5 * _energy/(max_energy)) else (0.65 * _energy/(min_energy) + 0.02),
             strokeWeight: 1,
-            fillColor: (if f.energy < 0 then '#FF0000' else 'blue'),
-            fillOpacity: if (f.energy > 0) then (0.9 * f.energy/(max_energy) + 0.02) else (0.98 * f.energy/(max_energy) + 0.1),
+            fillColor: (if _energy < 0 then '#FF0000' else 'blue'),
+            fillOpacity: if (_energy > 0) then (0.9 * _energy/(max_energy) + 0.02) else (0.98 * _energy/(max_energy) + 0.1),
             map: Map.google_map,
             bounds: {
                 north: field[i+lngs.length]?.lat || f.lat + d_lat,
@@ -128,8 +149,8 @@ Map.renderField = (field) ->
             }
         }
         background = new google.maps.Rectangle {
-            strokeColor: if (Math.abs(f.energy) > 0.8) then (if f.energy < 0 then '#FF0000' else '#90cc43') else "#aaa",
-            strokeOpacity: Math.abs(0.25 * cubeRt(f.energy/max_energy)),
+            strokeColor: if (Math.abs(_energy) > 0.8) then (if _energy < 0 then '#FF0000' else '#90cc43') else "#aaa",
+            strokeOpacity: Math.abs(0.25 * cubeRt(_energy/max_energy)),
             strokeWeight: 1,
             fillOpacity: 0.1,
             fillColor: "#bbb"
