@@ -1,11 +1,13 @@
 React = require 'react'
-{Link} = require 'react-router'
+{Link, hashHistory} = require 'react-router'
 fetch$ = require 'kefir-fetch'
 KefirBus = require 'kefir-bus'
+_Dispatcher = require './dispatcher'
 
 Map = require './map'
 {LatLng} = require './common'
 ScrapeSummary = require './scrape-summary'
+PlaceSummary = require './place-summary'
 
 Dispatcher =
     loadField: (field_id) ->
@@ -17,6 +19,9 @@ Dispatcher =
     findFields: ->
         fetch$ 'get', "/fields.json?start=0&end=10000"
 
+    findPlacesNear: (field_id, lat, lng) ->
+        fetch$ 'get', "/models/#{field_id}/n_closest/100.json?lat=#{lat}&lng=#{lng}"
+
     results$: new KefirBus()
 
 FieldPage = React.createClass
@@ -24,15 +29,32 @@ FieldPage = React.createClass
     getInitialState: ->
         field: {}
         energies: []
+        places: []
         selected: {}
 
     componentDidMount: ->
         Map.initializeMap()
         @findField()
+        _Dispatcher.map_clicks$.onValue (click) =>
+            hashHistory.push "/fields/#{@props.params.field_id}?lat=#{click.f.lat}&lng=#{click.f.lng}"
+            {lat, lng} = @props.location.query
+            @loadPlaces {lat, lng}
+
+    loadPlaces: ({lat, lng}) ->
+        Map.clearMarkers()
+        # TODO: make sure this works with new props
+        @places$ = Dispatcher.findPlacesNear @props.params.field_id, lat, lng
+        @places$.onValue @foundPlaces
 
     componentWillReceiveProps: (new_props) ->
+
         if @props.params.field_id != new_props.params.field_id
             @findField(new_props)
+
+    foundPlaces: (places) ->
+        places.map (r) ->
+            Map.addPoint r
+        @setState {places}
 
     findField: (props) ->
         Map.clearField()
@@ -57,6 +79,9 @@ FieldPage = React.createClass
     foundField: (energies) ->
         selected = @state.selected
         Map.renderField energies, selected
+        Map.google_map.addListener('click', (e) ->
+            console.log e
+            )
         @setState {energies}
 
     toggleSelected: (selected) -> =>
@@ -69,7 +94,6 @@ FieldPage = React.createClass
         @setState {selected: _selected}, =>
             Map.renderField @state.energies, @state.selected
 
-
     render: ->
         <div className='field-page'>
             <div className='page-nav'>
@@ -77,7 +101,17 @@ FieldPage = React.createClass
                 <h3>{@state.field.name}</h3>
                 {if @state.field.scrape then <div className='scrape-summary'>in {@state.field.scrape._id}</div>}
             </div>
-            <div id='map-canvas' />
+            <div className='map-w-sidebar'>
+                <div className='field-places'>
+                    {if @state.places.length == 0
+                        <div className='help'>Click a square to see nearby places</div>
+                    else
+                        @state.places.map (p, i) ->
+                            <PlaceSummary key=i place=p />
+                    }
+                </div>
+                <div id='map-canvas' styles={'width':'100%';'height':'600px'} />
+            </div>
             <div className='field-details'>
                 {if @state.field.weights?
                     <div className='section'>

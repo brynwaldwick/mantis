@@ -4,6 +4,8 @@ KefirBus = require 'kefir-bus'
 _ = require 'underscore'
 {divideByN} = require '../../../helpers'
 
+Dispatcher = require './dispatcher'
+
 sf_lat_lng = new google.maps.LatLng 37, -122.0915525
 sf_lat_lng = new google.maps.LatLng 41.0531356, -73.5027429
 
@@ -42,6 +44,9 @@ Map.initializeMap = (canvas, coordinates, size) ->
         zoom: 8
     Map.google_map = new google.maps.Map document.getElementById("map-canvas"), mapOptions
     Map.bounds = new google.maps.LatLngBounds()
+    # google.maps.event.addListener(Map, 'click', (event) ->
+    #     console.log event
+    #     )
 
 Map.centerOn = (marker) ->
     Map.google_map.panTo(marker.getPosition())
@@ -99,9 +104,8 @@ Map.renderField = (field, selected) ->
         Object.keys(e_object).map (v) ->
             if v in selected
                 _result += e_object[v]
+        return _result
 
-        return _result;
-    console.log energies
 
     energies = _.flatten energies
     # energies = _.pluck(field, 'energy')
@@ -111,6 +115,7 @@ Map.renderField = (field, selected) ->
     min_energy = _.min energies
     console.log max_energy
     console.log min_energy
+    console.log lats.length, lngs.length
     d_lng = field[0].lng - field[1].lng
     d_lat = field[lngs.length].lat - field[0].lat
 
@@ -135,35 +140,49 @@ Map.renderField = (field, selected) ->
                 _energy += f.energies[e]
         # console.log 'my final energy is', _energy
         rectangle = new google.maps.Rectangle {
-            strokeColor: (if _energy < 0 then '#FF0000' else 'blue'),
+            strokeColor: (if _energy < 0 then '#FF0000' else '#0000ff'),
             strokeOpacity: if (_energy > 0) then (0.5 * _energy/(max_energy)) else (0.65 * _energy/(min_energy) + 0.02),
             strokeWeight: 1,
-            fillColor: (if _energy < 0 then '#FF0000' else 'blue'),
-            fillOpacity: if (_energy > 0) then (0.9 * _energy/(max_energy) + 0.02) else (0.98 * _energy/(max_energy) + 0.1),
+            fillColor: (if _energy < 0 then '#FF0000' else '#0000ff'),
+            fillOpacity: if (_energy > 0) then (0.9 * _energy/(max_energy) + 0.02).toFixed(2) else (0.98 * _energy/(max_energy) + 0.1).toFixed(2),
             map: Map.google_map,
             bounds: {
-                north: field[i+lngs.length]?.lat || f.lat + d_lat,
+                north: field[i+lngs.length]?.lat || (f.lat + d_lat),
                 south: f.lat,
-                east: if (field[i+1]?.lng > f.lng) then (field[i+1].lng) else f.lng - d_lng,
+                east: if (field[i+1]?.lng > f.lng) then (field[i+1].lng) else (f.lng - d_lng),
                 west: f.lng
             }
         }
-        background = new google.maps.Rectangle {
-            strokeColor: if (Math.abs(_energy) > 0.8) then (if _energy < 0 then '#FF0000' else '#90cc43') else "#aaa",
-            strokeOpacity: Math.abs(0.25 * cubeRt(_energy/max_energy)),
-            strokeWeight: 1,
-            fillOpacity: 0.1,
-            fillColor: "#bbb"
-            map: Map.google_map,
-            bounds: {
-                north: field[i+lngs.length]?.lat || f.lat + d_lat,
-                south: f.lat,
-                east: if (field[i+1]?.lng > f.lng) then (field[i+1].lng) else f.lng - d_lng,
-                west: f.lng
-            }
-        }
-        Map.boxes.push background
+
+        _handleClick = () ->
+            console.log 'just clicked', f
+            console.log 'did it work'
+            _lat = f.lat + d_lat/2
+            _lng = f.lng + d_lng/2
+            Dispatcher.map_clicks$.emit {kind: 'field', f: {lat: _lat, lng: _lng}}
+
+        rectangle.addListener 'click', _handleClick
         Map.boxes.push rectangle
+
+        # background = new google.maps.Rectangle {
+        #     strokeColor: if (Math.abs(_energy) > 0.8) then (if _energy < 0 then '#FF0000' else '#90cc43') else "#aaa",
+        #     strokeOpacity: Math.abs(0.25 * cubeRt(_energy/max_energy)),
+        #     strokeWeight: 1,
+        #     fillOpacity: 0.1,
+        #     fillColor: "#bbb"
+        #     map: Map.google_map,
+        #     bounds: {
+        #         north: field[i+lngs.length]?.lat || f.lat + d_lat,
+        #         south: f.lat,
+        #         east: if (field[i+1]?.lng > f.lng) then (field[i+1].lng) else f.lng - d_lng,
+        #         west: f.lng
+        #     }
+        # }
+
+        # Map.google_map.addListener rectangle, 'click', ->
+        #     console.log 'hello hello'
+        # Map.boxes.push background
+
 
         Map.bounds.extend {lat: f.lat, lng: f.lng}
     Map.zoomToBounds()

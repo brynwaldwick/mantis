@@ -58,7 +58,7 @@ i = 0
 app.get '/icons/:icon.svg', (req, res) ->
     {icon} = req.params
     {color, text} = req.query
-    slug = text
+    slug = text.toLowerCase()
     if colors[slug]
         color = colors[slug]
     else

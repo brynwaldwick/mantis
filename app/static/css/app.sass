@@ -266,7 +266,48 @@ textarea
             padding-right: $padding.default
             margin-top: $padding.default
 
+.place-summary
+    display: flex
+    flex-direction: column
+    flex-shrink: 0
+    margin-bottom: 3px
+
+    .row-1
+        display: flex
+        flex-direction: row
+
+    .vicinity
+        padding-left: 35px
+        color: rgba(#888, 0.7)
+        font-size: 12px
+        margin-top: -4px
+
+    .distance
+        color: rgba(#888, 0.7)
+        text-align: right
+        flex-grow: 1
+
 .field-page
+    display: flex
+    flex-direction: column
+    overflow-y: scroll
+    padding: $padding.tight
+
+    .map-w-sidebar
+        display: flex
+
+    .field-places, #map-canvas
+        display: flex
+
+    .field-places
+        width: 20%
+        max-height: 600px
+        overflow-y: scroll
+        padding: $padding.tight
+        flex-direction: column
+
+    #map-canvas
+        width: 79%
 
     .field-details
         display: flex
