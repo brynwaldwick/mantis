@@ -289,6 +289,59 @@ textarea {
   margin-top: 16px;
 }
 
+.place-summary {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  margin-bottom: 3px;
+}
+
+.place-summary .row-1 {
+  display: flex;
+  flex-direction: row;
+}
+
+.place-summary .vicinity {
+  padding-left: 35px;
+  color: rgba(136, 136, 136, 0.7);
+  font-size: 12px;
+  margin-top: -4px;
+}
+
+.place-summary .distance {
+  color: rgba(136, 136, 136, 0.7);
+  text-align: right;
+  flex-grow: 1;
+}
+
+.field-page {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  padding: 8px;
+}
+
+.field-page .map-w-sidebar {
+  display: flex;
+}
+
+.field-page .field-places,
+.field-page #map-canvas {
+  display: flex;
+}
+
+.field-page .field-places {
+  width: 20%;
+  max-height: 600px;
+  overflow-y: scroll;
+  padding: 8px;
+  flex-direction: column;
+}
+
+.field-page #map-canvas {
+  width: 79%;
+}
+
 .field-page .field-details {
   display: flex;
   flex-direction: column;
