@@ -248,34 +248,43 @@ FieldPage = React.createClass({
     }
   },
   findField: function(props) {
-    var results$, _ref;
+    var _ref;
     Map.clearField();
     if (!props) {
       props = this.props;
     }
-    if (typeof results$ !== "undefined" && results$ !== null) {
-      results$.offValue(this.foundField);
-    }
-    results$ = Dispatcher.loadField(props.params.field_id);
-    results$.onValue(this.foundField);
     if ((_ref = this.field$) != null) {
       _ref.offValue(this.gotField);
     }
     this.field$ = Dispatcher.getField(props.params.field_id);
     return this.field$.onValue(this.gotField);
   },
+  loadFieldEnergies: function() {
+    var results$;
+    if (typeof results$ !== "undefined" && results$ !== null) {
+      results$.offValue(this.foundField);
+    }
+    results$ = Dispatcher.loadField(this.state.field.model_id);
+    return results$.onValue(this.foundField);
+  },
   gotField: function(field) {
+    var selected;
+    selected = Object.keys(field.weights);
     return this.setState({
-      field: field
-    });
+      field: field,
+      selected: selected
+    }, (function(_this) {
+      return function() {
+        return _this.loadFieldEnergies();
+      };
+    })(this));
   },
   foundField: function(energies) {
     var selected;
-    selected = Object.keys(energies[0].energies);
+    selected = this.state.selected;
     Map.renderField(energies, selected);
     return this.setState({
-      energies: energies,
-      selected: selected
+      energies: energies
     });
   },
   toggleSelected: function(selected) {
@@ -304,10 +313,13 @@ FieldPage = React.createClass({
     }, React.createElement("div", {
       "className": 'page-nav'
     }, React.createElement(Link, {
-      "to": "/fields"
+      "to": "/fields",
+      "className": 'back'
     }, React.createElement("i", {
       "className": 'fa fa-arrow-left'
-    })), React.createElement("h3", null, this.state.field.name)), React.createElement("div", {
+    })), React.createElement("h3", null, this.state.field.name), (this.state.field.scrape ? React.createElement("div", {
+      "className": 'scrape-summary'
+    }, "in ", this.state.field.scrape._id) : void 0)), React.createElement("div", {
       "id": 'map-canvas'
     }), React.createElement("div", {
       "className": 'field-details'
@@ -317,9 +329,7 @@ FieldPage = React.createClass({
       "className": 'section'
     }, React.createElement(ScrapeSummary, {
       "scrape": this.state.field.scrape
-    })) : void 0), React.createElement("div", {
-      "className": 'field'
-    }, JSON.stringify(this.state.field))));
+    })) : void 0)));
   },
   renderWeights: function(field_spec) {
     return React.createElement("div", {
@@ -335,6 +345,7 @@ FieldPage = React.createClass({
           color: "white"
         };
         color = weight < 0.5 ? field_spec.weights[w_k] : void 0;
+        console.log(w_k);
         active = __indexOf.call(_this.state.selected, w_k) >= 0 ? '' : 'inactive';
         return React.createElement("div", {
           "className": "card model-aspect " + active,
@@ -344,9 +355,10 @@ FieldPage = React.createClass({
           "onClick": _this.toggleSelected(w_k),
           "style": styles
         }, field_spec.weights[w_k].toFixed(2)), React.createElement(Link, {
-          "to": "/results/" + w_k
-        }, React.createElement("div", {
+          "to": "/results/" + w_k,
           "className": 'result-key'
+        }, React.createElement("div", {
+          "className": 'key'
         }, w_k)));
       };
     })(this)));
@@ -582,7 +594,6 @@ Map.renderField = function(field, selected) {
     });
     return _result;
   });
-  console.log(energies);
   energies = _.flatten(energies);
   lats = _.uniq(_.pluck(field, 'lat'));
   lngs = _.uniq(_.pluck(field, 'lng'));
@@ -706,13 +717,15 @@ module.exports = Map;
 
 
 },{"../../../helpers":12,"kefir-bus":241,"react":239,"react-dom":13,"underscore":251}],6:[function(require,module,exports){
-var Dispatcher, KefirBus, Map, PointComparer, ProcessPoints, React, ResultsPage, Store, binPoints, distanceBtw, fetch$, _;
+var Dispatcher, KefirBus, Link, Map, PointComparer, ProcessPoints, React, ResultsPage, Store, binPoints, distanceBtw, fetch$, _;
 
 _ = require('underscore');
 
 React = require('react');
 
 fetch$ = require('kefir-fetch');
+
+Link = require('react-router').Link;
 
 KefirBus = require('kefir-bus');
 
@@ -738,7 +751,8 @@ Store = {
 ResultsPage = React.createClass({
   getInitialState: function() {
     return {
-      results: []
+      results: [],
+      keys: []
     };
   },
   componentDidMount: function() {
@@ -766,6 +780,7 @@ ResultsPage = React.createClass({
     return results$.onValue(this.handleResults);
   },
   handleResults: function(results) {
+    var keys;
     Map.clearMarkers();
     Store.results = results;
     results.map(function(r) {
@@ -774,17 +789,44 @@ ResultsPage = React.createClass({
     Dispatcher.results$.emit({
       test_jones: 'test'
     });
+    keys = _.uniq(results.map(function(r) {
+      return r.key;
+    }));
     this.setState({
-      results: results
+      results: results,
+      keys: keys
     });
     return Map.zoomToBounds();
   },
   render: function() {
+    console.log(this.state.keys);
+    console.log(this.props.params);
     return React.createElement("div", {
       "className": 'results-page'
     }, React.createElement("div", {
       "id": 'map-canvas'
-    }), React.createElement("h5", null, this.state.results.length, " Results"), React.createElement(PointComparer, null));
+    }), React.createElement("h3", null, this.state.results.length, " Results for ", this.props.params.results_key), React.createElement("div", {
+      "className": 'result-keys'
+    }, this.state.keys.map(this.renderResultKey)), React.createElement(PointComparer, null));
+  },
+  renderResultKey: function(w_k, i) {
+    var kind, _display;
+    kind = w_k.split(':')[1];
+    if (this.props.params.results_key.indexOf('*') > -1) {
+      _display = w_k;
+    } else {
+      _display = w_k;
+    }
+    return React.createElement("div", {
+      "className": "card model-aspect result-key",
+      "key": i
+    }, React.createElement("img", {
+      "src": "/icons/place.svg?text=" + kind.slice(0, 4)
+    }), React.createElement(Link, {
+      "to": "/results/" + w_k
+    }, React.createElement("div", {
+      "className": 'key'
+    }, _display)));
   }
 });
 
@@ -800,7 +842,6 @@ ProcessPoints = function(points) {
     });
     return p.min_distance = _.min(p_dists);
   });
-  console.log('The prcoessed points are', points);
   return points;
 };
 
@@ -896,7 +937,7 @@ PointComparer = React.createClass({
 module.exports = ResultsPage;
 
 
-},{"../../../helpers":12,"./map":5,"kefir-bus":241,"kefir-fetch":242,"react":239,"underscore":251}],7:[function(require,module,exports){
+},{"../../../helpers":12,"./map":5,"kefir-bus":241,"kefir-fetch":242,"react":239,"react-router":43,"underscore":251}],7:[function(require,module,exports){
 var LatLng, Map, React, ScrapeSummary;
 
 React = require('react');
