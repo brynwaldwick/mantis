@@ -21,7 +21,7 @@ $colors
     border: #e6e6e5
 
 $fonts
-    default: 12px
+    default: 14px
     big: 16px
     mega: 24px
 
@@ -45,6 +45,7 @@ body
     padding: $padding.default
     border-bottom: 2px solid $colors.border
     border-radius: 2px
+    display: flex
 
     &.inactive
         background: $colors.light_gray
@@ -97,6 +98,7 @@ body
         color: rgba(28, 169, 104, 0.9)
         font-weight: bold
         margin-left: 19px
+        text-decoration: none
 
         &.active
             color: rgb(32, 144, 93)
@@ -105,8 +107,6 @@ body
     a
         color: $colors.green
         font-size: $fonts.big
-        padding-right: $padding.default
-        margin-top: $padding.default
         display: inline-block
 
 .page-nav
@@ -116,12 +116,16 @@ body
 
     a
         margin: 0px
+        margin-right: $padding.tight
         align-self: center
         cursor: pointer
 
     h3
         margin: 0px
         align-self: center
+
+    .scrape-summary
+        margin-left: $padding.tight
 
 #app
     margin-top: 60px
@@ -138,6 +142,10 @@ input, textarea, button
 
     &:active, &:focus
         outline: none
+
+input, textarea
+    padding: $padding.default
+    color: $colors.green
 
 button
     padding: $padding.tight $padding.default
@@ -233,6 +241,31 @@ textarea
 .result-key
     font-weight: bold
 
+.results-page
+    .result-keys
+        display: flex
+        flex-direction: row
+        flex-wrap: wrap
+
+    .result-key
+
+        margin-right: $padding.default
+        font-size: $fonts.default
+
+        a, .key
+            margin-top: 0px
+            text-decoration: none
+            padding-left: $padding.tight
+            font-size: $fonts.default
+        img
+            margin: -2px
+
+.fields-page
+    .fields
+        a
+            padding-right: $padding.default
+            margin-top: $padding.default
+
 .field-page
 
     .field-details
@@ -251,9 +284,8 @@ textarea
         align-items: center
 
         .swatch, .result-key
-            align-self: flex-start
-            align-items: center
-            flex-direction:row
+            align-self: center
+            flex-direction: row
 
         .swatch
             margin-right: $padding.default
@@ -264,5 +296,6 @@ textarea
             text-decoration: none
             font-size: 14px
 
-        .result-key
-            margin-top: 4px
+    .card.inactive
+        .swatch
+            color: $colors.light_gray

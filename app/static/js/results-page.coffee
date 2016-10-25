@@ -1,6 +1,7 @@
 _ = require 'underscore'
 React = require 'react'
 fetch$ = require 'kefir-fetch'
+{Link} = require 'react-router'
 KefirBus = require 'kefir-bus'
 
 {distanceBtw} = require '../../../helpers'
@@ -23,6 +24,7 @@ ResultsPage = React.createClass
     
     getInitialState: ->
         results: []
+        keys: []
 
     componentDidMount: ->
         Map.initializeMap()
@@ -49,15 +51,37 @@ ResultsPage = React.createClass
             Map.addPoint r
         Dispatcher.results$.emit {test_jones: 'test'}
         # Map.setMarkers results
-        @setState {results}
+        keys = _.uniq results.map (r) -> r.key
+        @setState {results, keys}
         Map.zoomToBounds()
 
-
     render: ->
+        console.log @state.keys
+        console.log @props.params
         <div className='results-page'>
             <div id='map-canvas' />
-            <h5>{@state.results.length} Results</h5>
+            <h3>{@state.results.length} Results for {@props.params.results_key}</h3>
+            <div className='result-keys'>
+                {@state.keys.map @renderResultKey}
+            </div>
             <PointComparer />
+        </div>
+
+    renderResultKey: (w_k, i) ->
+        kind = w_k.split(':')[1]
+
+        if @props.params.results_key.indexOf('*') > -1
+            # replacing = @props.params.results_key.replace("*",'')
+            # _display = w_k.replace(replacing, '[ ]').replace(':results','')
+            _display = w_k
+        else
+            _display = w_k
+
+        <div className="card model-aspect result-key" key=i >
+            <img src="/icons/place.svg?text=#{kind[0..3]}" />
+            <Link to="/results/#{w_k}">
+                <div className='key'>{_display}</div>
+            </Link>
         </div>
 
 ProcessPoints = (points) ->
@@ -67,7 +91,6 @@ ProcessPoints = (points) ->
         p_dists = lats_and_lngs.map (l) -> distanceBtw l, p
         p.min_distance = _.min p_dists
 
-    console.log 'The prcoessed points are', points
     return points
 
 binPoints = (points, n=10, key) ->

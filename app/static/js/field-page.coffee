@@ -40,22 +40,24 @@ FieldPage = React.createClass
         if !props
             props = @props
 
-        results$?.offValue @foundField
-        results$ = Dispatcher.loadField(props.params.field_id)
-        results$.onValue @foundField
-
-
         @field$?.offValue @gotField
         @field$ = Dispatcher.getField(props.params.field_id)
         @field$.onValue @gotField
 
+    loadFieldEnergies: ->
+        results$?.offValue @foundField
+        results$ = Dispatcher.loadField(@state.field.model_id)
+        results$.onValue @foundField
+
     gotField: (field) ->
-        @setState {field}
+        selected = Object.keys(field.weights)
+        @setState {field, selected}, =>
+            @loadFieldEnergies()
 
     foundField: (energies) ->
-        selected = Object.keys(energies[0].energies)
+        selected = @state.selected
         Map.renderField energies, selected
-        @setState {energies, selected}
+        @setState {energies}
 
     toggleSelected: (selected) -> =>
         Map.clearField()
@@ -71,8 +73,9 @@ FieldPage = React.createClass
     render: ->
         <div className='field-page'>
             <div className='page-nav'>
-                <Link to="/fields" ><i className='fa fa-arrow-left' /></Link>
+                <Link to="/fields" className='back' ><i className='fa fa-arrow-left' /></Link>
                 <h3>{@state.field.name}</h3>
+                {if @state.field.scrape then <div className='scrape-summary'>in {@state.field.scrape._id}</div>}
             </div>
             <div id='map-canvas' />
             <div className='field-details'>
@@ -85,9 +88,6 @@ FieldPage = React.createClass
                     <div className='section'>
                         <ScrapeSummary scrape=@state.field.scrape />
                     </div>}
-                <div className='field'>
-                    {JSON.stringify(@state.field)}
-                </div>
             </div>
         </div>
 
@@ -105,11 +105,12 @@ FieldPage = React.createClass
                 }
 
                 color = if weight < 0.5 then field_spec.weights[w_k]
+                console.log w_k
                 active = if w_k in @state.selected then '' else 'inactive'
                 <div className="card model-aspect #{active}" key=i >
                     <div className='swatch' onClick=@toggleSelected(w_k) style={styles} >{field_spec.weights[w_k].toFixed(2)}</div>
-                    <Link to="/results/#{w_k}">
-                        <div className='result-key'>{w_k}</div>
+                    <Link to="/results/#{w_k}" className='result-key'>
+                        <div className='key'>{w_k}</div>
                     </Link>
                 </div>
             }
