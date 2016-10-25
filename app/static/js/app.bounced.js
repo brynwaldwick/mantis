@@ -710,7 +710,7 @@ Map.renderField = function(field, selected) {
       console.log('just clicked', f);
       console.log('did it work');
       _lat = f.lat + d_lat / 2;
-      _lng = f.lng + d_lng / 2;
+      _lng = f.lng - d_lng / 2;
       return Dispatcher.map_clicks$.emit({
         kind: 'field',
         f: {
