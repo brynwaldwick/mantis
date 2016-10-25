@@ -798,7 +798,7 @@ PlaceSummary = React.createClass({
     }, React.createElement("div", {
       "className": 'row-1'
     }, React.createElement("img", {
-      "src": "/icons/place.svg?text=" + (p.name.slice(0, 4).toLowerCase())
+      "src": "/icons/place.svg?text=" + (p.kind.slice(0, 4).toLowerCase())
     }), React.createElement("div", {
       "className": 'name'
     }, p.name), React.createElement("div", {
