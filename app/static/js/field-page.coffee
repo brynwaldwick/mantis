@@ -274,11 +274,11 @@ ConcentrationGraph = React.createClass
                 <g className='x axis' transform="translate(0, #{@props.height + 20})">
                     {@x.ticks(5).map (tick, i) =>
                         <g style={{transform: "translate(#{@x(tick)}px, 0)"}} key=tick>
-                            <text>{tick}</text>
+                            <text>{tick.toFixed(1)}</text>
                         </g>
                     }
                 </g>
-                <g className='y axis' transform="translate(-35, 5)">
+                <g className='y axis' transform="translate(-45, 5)">
                     {@y.ticks(5).map (tick, i) =>
                         <g style={{transform: "translate(0, #{@props.height - @y(tick)}px)", color: "rgba(#888, 0.7)"}} key=tick>
                             <text>{tick.toFixed(2)}</text>
