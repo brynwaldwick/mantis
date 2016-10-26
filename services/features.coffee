@@ -301,94 +301,94 @@ fields = {
         
     # }
 
-    # '580bd3be4a38b994f39ad8b4': {
-    #     model_id: '580bd3be4a38b994f39ad8b4'
-    #     name: "bar scene"
-    #     scrape: {
-    #         _id: 'sf-bay'
-    #         # bounds: [{lat: 37.7824742, lng: -122.5142652}, {lat: 37.284985, lng: -121.8502178}]
-    #         bounds: [{lat: 37.968378, lng: -122.5903596}, {lat: 37.2785229, lng: -121.6586587}]
-    #         x_by_y: [13, 11]
-    #         radius: 5000
-    #     }
+    '580bd3be4a38b994f39ad8b4': {
+        model_id: '580bd3be4a38b994f39ad8b4'
+        name: "bar scene"
+        scrape: {
+            _id: 'sf-bay'
+            # bounds: [{lat: 37.7824742, lng: -122.5142652}, {lat: 37.284985, lng: -121.8502178}]
+            bounds: [{lat: 37.968378, lng: -122.5903596}, {lat: 37.2785229, lng: -121.6586587}]
+            x_by_y: [13, 11]
+            radius: 5000
+        }
 
-    #     weights: {
-    #         "search:cheap_bars:scrape:sf-bay:results": 0.2
-    #         "search:nice_bars:scrape:sf-bay:results": 0.99
-    #     }
+        weights: {
+            "search:cheap_bars:scrape:sf-bay:results": 0.2
+            "search:nice_bars:scrape:sf-bay:results": 0.99
+        }
 
-    #     D_2: 1.5
-    #     D_3: 6
-    #     GRID_RESOLUTION: 5
-    # }
+        D_2: 1.5
+        D_3: 6
+        GRID_RESOLUTION: 5
+    }
 
-    # '580cf74911fb34f516d87b24': {
-    #     model_id: '580cf74911fb34f516d87b24'
-    #     name: 'middle class+ families'
+    '580cf74911fb34f516d87b24': {
+        model_id: '580cf74911fb34f516d87b24'
+        name: 'middle class+ families'
 
-    #     scrape: {
-    #         _id: 'east_of_nyc'
-    #         bounds: [{lat: 40.9776543, lng: -74.005442}, {lat: 40.6061055, lng: -73.4466227}]
-    #         x_by_y: [11, 9]
-    #         radius: 3250
-    #     }   
+        scrape: {
+            _id: 'east_of_nyc'
+            bounds: [{lat: 40.9776543, lng: -74.005442}, {lat: 40.6061055, lng: -73.4466227}]
+            x_by_y: [11, 9]
+            radius: 3250
+        }   
 
-    #     weights: {
-    #         'search:7_eleven:scrape:east_of_nyc:results': 0.11
-    #         'search:kfc:scrape:east_of_nyc:results': 0.2
-    #         'search:mcdonalds:scrape:east_of_nyc:results': 0.4
-    #         # 'search:dollar_stores:scrape:east_of_nyc:results': 0.21
-    #         'search:cheap_restaurants:scrape:east_of_nyc:results': 0.3
-    #         'search:cheap_bars:scrape:east_of_nyc:results': 0.3
-    #         # 'search:walmart:scrape:east_of_nyc:results': 0.4
-    #         # # 'search:schools:scrape:east_of_nyc:results': 0.5
-    #         'search:trader_joes:scrape:east_of_nyc:results': 0.6
-    #         'search:starbucks:scrape:east_of_nyc:results': 0.8
-    #         # 'search:yoga:scrape:east_of_nyc:results': 0.53
-    #         'search:whole_foods:scrape:east_of_nyc:results': 0.8
-    #         'search:nice_restaurants:scrape:east_of_nyc:results': 0.91
-    #         # 'search:churches:scrape:east_of_nyc:results': 0.5
-    #         # 'search:dunkin:scrape:east_of_nyc:results': 0.5
-    #     }
+        weights: {
+            'search:7_eleven:scrape:east_of_nyc:results': 0.11
+            'search:kfc:scrape:east_of_nyc:results': 0.2
+            'search:mcdonalds:scrape:east_of_nyc:results': 0.4
+            # 'search:dollar_stores:scrape:east_of_nyc:results': 0.21
+            'search:cheap_restaurants:scrape:east_of_nyc:results': 0.3
+            'search:cheap_bars:scrape:east_of_nyc:results': 0.3
+            # 'search:walmart:scrape:east_of_nyc:results': 0.4
+            # # 'search:schools:scrape:east_of_nyc:results': 0.5
+            'search:trader_joes:scrape:east_of_nyc:results': 0.6
+            'search:starbucks:scrape:east_of_nyc:results': 0.8
+            # 'search:yoga:scrape:east_of_nyc:results': 0.53
+            'search:whole_foods:scrape:east_of_nyc:results': 0.8
+            'search:nice_restaurants:scrape:east_of_nyc:results': 0.91
+            # 'search:churches:scrape:east_of_nyc:results': 0.5
+            # 'search:dunkin:scrape:east_of_nyc:results': 0.5
+        }
 
-    #     D_2: 4
-    #     D_3: 8
-    #     GRID_RESOLUTION: 3
-    # }
+        D_2: 4
+        D_3: 8
+        GRID_RESOLUTION: 3
+    }
 
-    # '580cf74911fb34f516d87b24': {
-    #     model_id: '580cf74911fb34f516d87b24'
-    #     name: 'starbucks vs kfc'
+    '580cf74911fb34f516d87b24': {
+        model_id: '580cf74911fb34f516d87b24'
+        name: 'starbucks vs kfc'
 
-    #     scrape: {
-    #         _id: 'east_of_nyc'
-    #         bounds: [{lat: 40.9776543, lng: -74.005442}, {lat: 40.6061055, lng: -73.4466227}]
-    #         x_by_y: [11, 9]
-    #         radius: 3250
-    #     }   
+        scrape: {
+            _id: 'east_of_nyc'
+            bounds: [{lat: 40.9776543, lng: -74.005442}, {lat: 40.6061055, lng: -73.4466227}]
+            x_by_y: [11, 9]
+            radius: 3250
+        }   
 
-    #     weights: {
-    #         # 'search:7_eleven:scrape:east_of_nyc:results': 0.11
-    #         'search:kfc:scrape:east_of_nyc:results': 0.2
-    #         # 'search:mcdonalds:scrape:east_of_nyc:results': 0.4
-    #         # 'search:dollar_stores:scrape:east_of_nyc:results': 0.21
-    #         # 'search:cheap_restaurants:scrape:east_of_nyc:results': 0.3
-    #         # 'search:cheap_bars:scrape:east_of_nyc:results': 0.3
-    #         # 'search:walmart:scrape:east_of_nyc:results': 0.4
-    #         # # 'search:schools:scrape:east_of_nyc:results': 0.5
-    #         # 'search:trader_joes:scrape:east_of_nyc:results': 0.6
-    #         'search:starbucks:scrape:east_of_nyc:results': 0.8
-    #         # 'search:yoga:scrape:east_of_nyc:results': 0.53
-    #         # 'search:whole_foods:scrape:east_of_nyc:results': 0.8
-    #         # 'search:nice_restaurants:scrape:east_of_nyc:results': 0.91
-    #         # 'search:churches:scrape:east_of_nyc:results': 0.5
-    #         # 'search:dunkin:scrape:east_of_nyc:results': 0.5
-    #     }
+        weights: {
+            # 'search:7_eleven:scrape:east_of_nyc:results': 0.11
+            'search:kfc:scrape:east_of_nyc:results': 0.2
+            # 'search:mcdonalds:scrape:east_of_nyc:results': 0.4
+            # 'search:dollar_stores:scrape:east_of_nyc:results': 0.21
+            # 'search:cheap_restaurants:scrape:east_of_nyc:results': 0.3
+            # 'search:cheap_bars:scrape:east_of_nyc:results': 0.3
+            # 'search:walmart:scrape:east_of_nyc:results': 0.4
+            # # 'search:schools:scrape:east_of_nyc:results': 0.5
+            # 'search:trader_joes:scrape:east_of_nyc:results': 0.6
+            'search:starbucks:scrape:east_of_nyc:results': 0.8
+            # 'search:yoga:scrape:east_of_nyc:results': 0.53
+            # 'search:whole_foods:scrape:east_of_nyc:results': 0.8
+            # 'search:nice_restaurants:scrape:east_of_nyc:results': 0.91
+            # 'search:churches:scrape:east_of_nyc:results': 0.5
+            # 'search:dunkin:scrape:east_of_nyc:results': 0.5
+        }
 
-    #     D_2: 2
-    #     D_3: 8
-    #     GRID_RESOLUTION: 3
-    # }
+        D_2: 2
+        D_3: 8
+        GRID_RESOLUTION: 3
+    }
 
     '580d0e619c4d782e8cd16065': {
         model_id: '580d0e619c4d782e8cd16065'

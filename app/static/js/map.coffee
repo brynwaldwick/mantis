@@ -206,7 +206,6 @@ Map.renderFieldSkeletons = (field_specs) ->
         }
 
         redirectTo = ->
-            console.log 'did it work'
             window.location = "/#/fields/#{f.model_id}"
         rect.addListener 'click', redirectTo
 
@@ -217,13 +216,15 @@ Map.renderFieldSkeletons = (field_specs) ->
 
 Map.addPoint = (place, options) ->
 
+    color = Dispatcher.getColor(place.kind[0..3]).replace('#','')
+
     marker = new google.maps.Marker
         id: place.place_id
         position: place.geometry.location
         map: Map.google_map
         zIndex: 0
         title: place.name
-        icon: "/icons/place.svg?text=#{place.kind[0..3]}"
+        icon: "/icons/place.svg?text=#{place.kind[0..3]}&color=#{color}"
         labelClass: 'amarker'
         title: place.name
         optimized: true

@@ -10,6 +10,21 @@ client = new somata.Client()
 MapService = client.bindRemote 'mantis:map'
 DataService = client.bindRemote 'mantis:data'
 
+filters = {
+    apple_store: (p) ->
+        return p.name.match(/apple/i)?
+    metro_pcs: (p) ->
+        return p.name.match(/metropcs/i)?
+    kfc: (p) ->
+        return p.name.match(/kfc/i)?
+    mcdonalds: (p) ->
+        return p.name.match(/mcdonald/i)?
+    starbucks: (p) ->
+        return p.name.match(/starbucks/i)?
+    dunkin: (p) ->
+        return p.name.match(/dunkin/i)?
+}
+
 queryPlaces = (query, cb) ->
     # TODO: paginate through to end
     all_results = []
@@ -32,8 +47,9 @@ queryPlaces = (query, cb) ->
     queryAndProcess query
 
 processResults = (places, search, cb) ->
-    if search.filter?
-        places = places.filter (p) -> search.filter p
+    console.log search
+    if filters[search._id]?
+        places = places.filter (p) -> filters[search._id] p
 
     DataService 'upsertPlacesChunk', places, cb
 
@@ -112,7 +128,7 @@ DataService 'findScrapes', {}, (err, scrapes) ->
         console.log scrapes, scrapes.length
         console.log searches, searches.length
     #     err, resp
-        # doScrapedSearch searches[26], scrapes[10], ->
+        # doScrapedSearch searches[5], scrapes[10], ->
             # process.exit()
 
 findResultsForScrape = (scrape_key, cb) ->

@@ -179,7 +179,7 @@ textarea
 
     .scrapes
         width: 20%
-        max-height: 600px
+        max-height: 590px
         overflow-y: scroll
 
         .scrape
@@ -291,7 +291,6 @@ textarea
     display: flex
     flex-direction: column
     overflow-y: scroll
-    padding: $padding.tight
 
     .map-w-sidebar
         display: flex
@@ -301,7 +300,7 @@ textarea
 
     .field-places
         width: 20%
-        max-height: 600px
+        max-height: 590px
         overflow-y: scroll
         padding: $padding.tight
         flex-direction: column
@@ -340,3 +339,57 @@ textarea
     .card.inactive
         .swatch
             color: $colors.light_gray
+
+.field-page
+    svg
+        margin-left: 21%
+        //padding-left: 21%
+
+.graph
+    position: relative
+
+    .toggle
+        position: absolute
+        top: $padding.default
+        left: $padding.default
+
+        .field
+            cursor: pointer
+
+        input
+            margin-right: $padding.tight
+            min-width: 50px
+            text-align: center
+
+svg
+    margin-top: $padding.default
+    overflow: visible
+    //position: absolute
+    //bottom: 220px
+    background: #d5d5d5
+
+    .tick text
+        font-size: 10px
+        fill: $colors.light_gray
+
+    .tick.selected text
+        font-weight: bold
+        fill: #000
+
+    .axis
+        color: rgba(#888, 0.7)
+
+    .x.axis .tick text
+        text-anchor: middle
+
+    .y.axis .tick text
+        text-anchor: left
+
+    g.bar
+        -webkit-transition: all 0.2s
+
+        opacity: 0.7
+        opacity: 1
+
+        &.selected
+            opacity: 1

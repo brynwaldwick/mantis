@@ -59,7 +59,9 @@ app.get '/icons/:icon.svg', (req, res) ->
     {icon} = req.params
     {color, text} = req.query
     slug = text.toLowerCase()
-    if colors[slug]
+    if color?
+        color = color
+    else if colors[slug]
         color = colors[slug]
     else
         color = d3.schemeCategory20[i%20].replace('#','')
