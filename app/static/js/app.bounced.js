@@ -646,11 +646,11 @@ ConcentrationGraph = React.createClass({
             transform: "translate(" + (_this.x(tick)) + "px, 0)"
           },
           "key": tick
-        }, React.createElement("text", null, tick));
+        }, React.createElement("text", null, tick.toFixed(1)));
       };
     })(this))), React.createElement("g", {
       "className": 'y axis',
-      "transform": "translate(-35, 5)"
+      "transform": "translate(-45, 5)"
     }, this.y.ticks(5).map((function(_this) {
       return function(tick, i) {
         return React.createElement("g", {

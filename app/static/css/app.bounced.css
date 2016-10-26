@@ -388,8 +388,13 @@ textarea {
   position: relative;
 }
 
+.graph .toggle .field:last-child {
+  margin-bottom: 0px;
+}
+
 .graph .toggle .field {
   cursor: pointer;
+  margin-bottom: 8px;
 }
 
 .graph .toggle input {
@@ -400,12 +405,14 @@ textarea {
 
 .graph .toggle {
   position: absolute;
-  top: 16px;
+  top: 24px;
   left: 16px;
+  background: #d5d5d5;
+  padding: 16px;
 }
 
 svg {
-  margin-top: 16px;
+  margin-top: 24px;
   overflow: visible;
   background: #d5d5d5;
 }
