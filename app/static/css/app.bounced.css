@@ -212,7 +212,7 @@ textarea {
 
 .scrapes-page .scrapes {
   width: 20%;
-  max-height: 600px;
+  max-height: 590px;
   overflow-y: scroll;
 }
 
@@ -318,7 +318,6 @@ textarea {
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
-  padding: 8px;
 }
 
 .field-page .map-w-sidebar {
@@ -332,7 +331,7 @@ textarea {
 
 .field-page .field-places {
   width: 20%;
-  max-height: 600px;
+  max-height: 590px;
   overflow-y: scroll;
   padding: 8px;
   flex-direction: column;
@@ -379,4 +378,66 @@ textarea {
 
 .field-page .card.inactive .swatch {
   color: #D2D2D2;
+}
+
+.field-page svg {
+  margin-left: 21%;
+}
+
+.graph {
+  position: relative;
+}
+
+.graph .toggle .field {
+  cursor: pointer;
+}
+
+.graph .toggle input {
+  margin-right: 8px;
+  min-width: 50px;
+  text-align: center;
+}
+
+.graph .toggle {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+}
+
+svg {
+  margin-top: 16px;
+  overflow: visible;
+  background: #d5d5d5;
+}
+
+svg .tick text {
+  font-size: 10px;
+  fill: #D2D2D2;
+}
+
+svg .tick.selected text {
+  font-weight: bold;
+  fill: #000;
+}
+
+svg .axis {
+  color: rgba(136, 136, 136, 0.7);
+}
+
+svg .x.axis .tick text {
+  text-anchor: middle;
+}
+
+svg .y.axis .tick text {
+  text-anchor: left;
+}
+
+svg g.bar.selected {
+  opacity: 1;
+}
+
+svg g.bar {
+  -webkit-transition: all 0.2s;
+  opacity: 0.7;
+  opacity: 1;
 }
