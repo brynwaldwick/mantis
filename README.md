@@ -61,6 +61,13 @@ A set of Results and weights that are used as a set to characterize a region.
 
 The model holds a weight on each species of Place included in the Results, which parametrizes the radial effects of a Place on the Model in the surrounding area. Results are pluggable in and out of a model.
 
+There are also a number of pre-built Models in Mantis for more quantitative results. Use them on the Results in a Model to compute features for a latitude and longitude: `buildFeaturesForModel(model_id, feature_slug, lat_lng)`, choosing from the folling feature slugs...
+
+    min_distance: Closest neighbor of each species
+    nearest_neighbors: Closest 4 Places of each species & their distance
+    closest_10: Closest 10 Places and their distance 
+    count_within_n_km: Number of each species within N kilometers
+    nth_neighbor_distance: Distance to the Nth-closest instance of each species
 
 ## A Physical Model for characterizing a general location by distance to nearby Places.
 
