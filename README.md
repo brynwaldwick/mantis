@@ -10,7 +10,7 @@ A local representation of a Google Place.
 
 ### Search
 
-A set of query parameters and filtering mechanisms to use Google Maps.
+A set of query parameters and filtering mechanisms to use Google Maps. The Places resulting for each of these searches will be treated as like species.
 
     _id: 'car_repairs'
     query_parts:
@@ -81,4 +81,6 @@ Place < r_neighbor > < r_neighborhood > < r_area >
 
 Given a latitude and longitude, we query all Places within r_area, sum their effect (based on a per-species parameterization) on a latitude and longitude to calculate the Model's energy for a given point. This energy function applied over a range of latitude and longitude is called a Field.
 
-By testing positive and negative trials against these Fields we hope to train the energy model's parameters and identify correlations between positive trials and nearby species. We can then apply this model to unexplored regions to generate locations that will give a higher rate of positive trials.
+![Mantis Screenshot](http://i.imgur.com/zdSMF61.png)
+
+By testing positive and negative trials (in applications with geographic dependencies) against these Fields we hope to train the energy model's parameters and identify correlations between positive trials and nearby species. We can then apply this model to unexplored regions to generate locations that will give a higher rate of positive trials.
