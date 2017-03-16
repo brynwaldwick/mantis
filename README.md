@@ -15,19 +15,19 @@ A set of query parameters and filtering mechanisms to use Google Maps.
     _id: 'car_repairs'
     query_parts:
         type: 'car_repair'
-,
+
     _id: 'cheap_restaurants'
     query_parts:
         type: 'restaurant'
         maxprice: 1
-,
+
     _id: '7_eleven'
     query_parts:
         keyword: '7 eleven'
         type: 'convenience_store'
     filter: (p) ->
         return p.name.match(/eleven/i)?
-,
+
     _id: 'walmart'
     query_parts:
         keyword: 'Walmart'
@@ -37,13 +37,13 @@ A set of query parameters and filtering mechanisms to use Google Maps.
 
 ### Scrapes
 
-Geographic regions defined by square bounds and a granularity. Granularity can be tuned for more efficient search in less dense regions.
+Geographic regions defined by square bounds and a granularity. Granularity can be tuned for more efficient search in less dense regions. Mantis' scraper will automatically paginate in locations where there were many results. Hopefully one day it will automatically search with more granularity if the original wide scrape saturates (5 pages).
 
     _id: 'roseland-manhattan'
     bounds: [{lat: 40.9054473, lng: -74.2959454}, {lat: 40.8054473, lng: -73.7959454}]
     x_by_y: [5, 3]
     radius: 5000
-,
+
     _id: 'sf-bay'
     # bounds: [{lat: 37.7824742, lng: -122.5142652}, {lat: 37.284985, lng: -121.8502178}]
     bounds: [{lat: 37.968378, lng: -122.5903596}, {lat: 37.2785229, lng: -121.6586587}]
@@ -65,7 +65,7 @@ The model holds a weight on each Result, which parametrizes the radial effects o
 
 Consider correlation between instances of retailers, restaurants, schools, and other locations represented by Google Places, and the demographics or other societal or cultural characteristics at a given latitude and longitude.
 
-We will use a model inspired by atomistics that considers distance in 3 regimes: neighbors, neighborhoods, and areas. We parametrize the neighbor radius, neighborhood radius, and area radius to fit a variety of local densities. We also parameterize the neighbor energy, neighborhood energy, and area energy, to capture nonlinearities between the relative effects of a nearby Place as a neighbor or from way across town.
+We will use a model inspired by atomistics that considers distance in 3 regimes: neighbors, neighborhoods, and areas. We parametrize the neighbor radius, neighborhood radius, and area radius to fit a variety of local densities. We also parameterize the neighbor energy, neighborhood energy, and area energy, to capture nonlinearities between the relative effects of a nearby Place as a neighbor or from way across town. Olive Gardens and prisons may behave differently in this sense.
 
 Place < r_neighbor > < r_neighborhood > < r_area >
 
