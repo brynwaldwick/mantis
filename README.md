@@ -54,11 +54,12 @@ Geographic regions defined by square bounds and a granularity. Granularity can b
 
 An array of Google Place ids found by applying a Search to a Scrape. These are keyed like `search:kfc:scrape:greater_boston:results` and cached in redis.
 
+
 ### Model
 
-A set of Results and weights that are used as a set to characterize a region. Think using KFC and Apple Store to build a crime map of Chicago.
+A set of Results and weights that are used as a set to characterize a region.
 
-The model holds a weight on each Result, which parametrizes the radial effects of a Place on the Model in the surrounding area.
+The model holds a weight on each species of Place included in the Results, which parametrizes the radial effects of a Place on the Model in the surrounding area. Results are pluggable in and out of a model.
 
 
 ## A Physical Model for characterizing a general location by distance to nearby Places.
@@ -69,11 +70,8 @@ We will use a model inspired by atomistics that considers distance in 3 regimes:
 
 Place < r_neighbor > < r_neighborhood > < r_area >
 
-![Mantis Model](http://i.imgur.com/wDEJla4.png)
+![Mantis Model](http://i.imgur.com/Xn8kvP4.png)
 
 Given a latitude and longitude, we query all Places within r_area, sum their effect (based on a per-species parameterization) on a latitude and longitude to calculate the Model's energy for a given point. This energy function applied over a range of latitude and longitude is called a Field.
 
 By testing positive and negative trials against these Fields we hope to train the energy model's parameters and identify correlations between positive trials and nearby species. We can then apply this model to unexplored regions to generate locations that will give a higher rate of positive trials.
-
-
-## Scripting scrapes for generalizing Models
