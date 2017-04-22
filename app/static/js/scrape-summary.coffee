@@ -1,12 +1,11 @@
 React = require 'react'
-Map = require './map'
 
 {LatLng} = require './common'
 
 ScrapeSummary = React.createClass
 
     clickScrape: (s) -> =>
-        Map.renderScrape s
+        @props.Map.renderScrape s
 
     render: ->
         s = @props.scrape

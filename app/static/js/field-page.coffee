@@ -23,7 +23,8 @@ FieldPage = React.createClass
         selected: {}
 
     componentDidMount: ->
-        Map.initializeMap()
+        @map = Map('map-canvas')
+        @map.initializeMap()
         @findField()
         Dispatcher.map_clicks$.onValue (click) =>
             hashHistory.push "/fields/#{@props.params.field_id}?lat=#{click.f.lat}&lng=#{click.f.lng}"
@@ -31,7 +32,7 @@ FieldPage = React.createClass
             @loadPlaces {lat, lng}
 
     loadPlaces: ({lat, lng}) ->
-        Map.clearMarkers()
+        @map.clearMarkers()
         # TODO: make sure this works with new props
         @places$ = Dispatcher.findPlacesNear @props.params.field_id, lat, lng
         @places$.onValue @foundPlaces
@@ -42,12 +43,12 @@ FieldPage = React.createClass
             @findField(new_props)
 
     foundPlaces: (places) ->
-        places.map (r) ->
-            Map.addColoredPoint r
+        places.map (r) =>
+            @map.addColoredPoint r
         @setState {places}
 
     findField: (props) ->
-        Map.clearField()
+        @map.clearField()
 
         if !props
             props = @props
@@ -69,21 +70,21 @@ FieldPage = React.createClass
     foundField: (energies) ->
         console.log energies
         selected = @state.selected
-        Map.renderField energies, selected
-        Map.google_map.addListener('click', (e) ->
+        @map.renderField energies, selected
+        @map.google_map.addListener('click', (e) ->
             console.log e
             )
         @setState {energies}
 
     toggleSelected: (selected) -> =>
-        Map.clearField()
+        @map.clearField()
         if @state.selected.indexOf(selected) > -1
             _selected = @state.selected.filter (s) -> s != selected
         else
             _selected = @state.selected.concat [selected]
 
         @setState {selected: _selected}, =>
-            Map.renderField @state.energies, @state.selected
+            @map.renderField @state.energies, @state.selected
 
     render: ->
         <div className='field-page'>

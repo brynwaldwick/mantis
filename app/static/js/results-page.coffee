@@ -27,7 +27,8 @@ ResultsPage = React.createClass
         keys: []
 
     componentDidMount: ->
-        Map.initializeMap()
+        @map = Map('map-canvas')
+        @map.initializeMap()
         if @props.params.results_key?
             @loadResults(@props.params.results_key)
 
@@ -45,15 +46,15 @@ ResultsPage = React.createClass
         results$.onValue @handleResults
 
     handleResults: (results) ->
-        Map.clearMarkers()
+        @map.clearMarkers()
         Store.results = results
-        results.map (r) ->
-            Map.addColoredPoint r
+        results.map (r) =>
+            @map.addColoredPoint r
         Dispatcher.results$.emit {test_jones: 'test'}
         # Map.setMarkers results
         keys = _.uniq results.map (r) -> r.key
         @setState {results, keys}
-        Map.zoomToBounds()
+        @map.zoomToBounds()
 
     render: ->
         console.log @state.keys

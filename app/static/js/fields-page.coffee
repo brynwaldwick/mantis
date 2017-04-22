@@ -15,7 +15,8 @@ FieldsPage = React.createClass
         fields: []
 
     componentDidMount: ->
-        Map.initializeMap()
+        @map = Map('map-canvas')
+        @map.initializeMap()
         @findField()
 
     componentWillReceiveProps: (new_props) ->
@@ -23,7 +24,7 @@ FieldsPage = React.createClass
             @findField(new_props)
 
     findField: (props) ->
-        Map.clearField()
+        @map.clearField()
 
         if !props
             props = @props
@@ -34,7 +35,7 @@ FieldsPage = React.createClass
 
     foundFields: (fields) ->
         console.log fields
-        Map.renderFieldSkeletons(fields)
+        @map.renderFieldSkeletons(fields)
         @setState {fields}
 
     render: ->

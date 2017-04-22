@@ -18,7 +18,9 @@ ScrapesPage = React.createClass
         scrapes: []
 
     componentDidMount: ->
-        Map.initializeMap()
+        @map = Map('map-canvas')
+        console.log @map
+        @map.initializeMap()
         @findScrapes()
 
     findScrapes: ->
@@ -33,7 +35,7 @@ ScrapesPage = React.createClass
         <div className='scrapes-page'>
             <div className='scrapes'>
                 {@state.scrapes.map (s, i) =>
-                    <ScrapeSummary scrape=s key=i />
+                    <ScrapeSummary Map=@map scrape=s key=i />
                 }
             </div>
             <div id='map-canvas' />

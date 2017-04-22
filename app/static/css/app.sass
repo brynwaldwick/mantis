@@ -350,11 +350,16 @@ textarea
 
     .toggle
         position: absolute
-        top: $padding.default
+        top: $padding.medium
         left: $padding.default
+        background: #d5d5d5
+        padding: $padding.default
 
         .field
             cursor: pointer
+            margin-bottom: $padding.tight
+            &:last-child
+                margin-bottom: 0px
 
         input
             margin-right: $padding.tight
@@ -362,7 +367,7 @@ textarea
             text-align: center
 
 svg
-    margin-top: $padding.default
+    margin-top: $padding.medium
     overflow: visible
     //position: absolute
     //bottom: 220px
