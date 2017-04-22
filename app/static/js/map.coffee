@@ -4,17 +4,15 @@ KefirBus = require 'kefir-bus'
 _ = require 'underscore'
 {divideByN} = require '../../../helpers'
 
+Map = require 'zamba-map'
+
 Dispatcher = require './dispatcher'
 
 sf_lat_lng = new google.maps.LatLng 37, -122.0915525
 sf_lat_lng = new google.maps.LatLng 41.0531356, -73.5027429
 
-Map =
-    markers: []
-    scrapes: []
-    boxes: []
-    bounds: null
-    selection$: KefirBus()
+Map.scrapes = []
+Map.boxes = []
 
 Map.clearMarkers = () ->
     Map.markers.map (m) -> m.setMap(null)
@@ -30,50 +28,6 @@ Map.clearField = () ->
     Map.boxes.map (b) -> b.setMap(null)
     Map.boxes = []
     Map.bounds = new google.maps.LatLngBounds()
-
-Map.initializeMap = (canvas, coordinates, size) ->
-    mapOptions =
-        disableDefaultUI: true
-        fullscreenControl: true
-        mapTypeControl: true
-        scrollwheel: true
-        zoomControl: true
-        draggable: true
-        scaleControl: true
-        center: sf_lat_lng
-        zoom: 8
-    Map.google_map = new google.maps.Map document.getElementById("map-canvas"), mapOptions
-    Map.bounds = new google.maps.LatLngBounds()
-    # google.maps.event.addListener(Map, 'click', (event) ->
-    #     console.log event
-    #     )
-
-Map.centerOn = (marker) ->
-    Map.google_map.panTo(marker.getPosition())
-
-MIN_ZOOM = 16
-MAX_ZOOM = 18
-
-Map.zoomOn = (marker) ->
-    zoom = Map.google_map.getZoom()
-    if zoom < MIN_ZOOM
-        Map.minZoom()
-    else if zoom < MAX_ZOOM
-        Map.google_map.setZoom(zoom + 2)
-    else
-        Map.showPopover marker
-
-Map.minZoom = ->
-    zoom = Map.google_map.getZoom()
-    if zoom < MIN_ZOOM
-        Map.google_map.setZoom(MIN_ZOOM)
-
-Map.zoomAndCenterOn = (marker) ->
-    Map.zoomOn marker
-    Map.centerOn marker
-
-Map.zoomToBounds = () ->
-     Map.google_map.fitBounds Map.bounds
 
 Map.renderScrape = (scrape) ->
     Map.clearScrapes()
@@ -134,11 +88,8 @@ Map.renderField = (field, selected) ->
         # _energy = f.energy
         # console.log f.energies
         Object.keys(f.energies).map (e) ->
-            # console.log e, console.log f.energies[e]
-            # console.log e
             if e in selected
                 _energy += f.energies[e]
-        # console.log 'my final energy is', _energy
         rectangle = new google.maps.Rectangle {
             strokeColor: (if _energy < 0 then '#FF0000' else '#0000ff'),
             strokeOpacity: if (_energy > 0) then (0.5 * _energy/(max_energy)) else (0.65 * _energy/(min_energy) + 0.02),
@@ -155,34 +106,12 @@ Map.renderField = (field, selected) ->
         }
 
         _handleClick = () ->
-            console.log 'just clicked', f
-            console.log 'did it work'
             _lat = f.lat + d_lat/2
             _lng = f.lng - d_lng/2
             Dispatcher.map_clicks$.emit {kind: 'field', f: {lat: _lat, lng: _lng}}
 
         rectangle.addListener 'click', _handleClick
         Map.boxes.push rectangle
-
-        # background = new google.maps.Rectangle {
-        #     strokeColor: if (Math.abs(_energy) > 0.8) then (if _energy < 0 then '#FF0000' else '#90cc43') else "#aaa",
-        #     strokeOpacity: Math.abs(0.25 * cubeRt(_energy/max_energy)),
-        #     strokeWeight: 1,
-        #     fillOpacity: 0.1,
-        #     fillColor: "#bbb"
-        #     map: Map.google_map,
-        #     bounds: {
-        #         north: field[i+lngs.length]?.lat || f.lat + d_lat,
-        #         south: f.lat,
-        #         east: if (field[i+1]?.lng > f.lng) then (field[i+1].lng) else f.lng - d_lng,
-        #         west: f.lng
-        #     }
-        # }
-
-        # Map.google_map.addListener rectangle, 'click', ->
-        #     console.log 'hello hello'
-        # Map.boxes.push background
-
 
         Map.bounds.extend {lat: f.lat, lng: f.lng}
     Map.zoomToBounds()
@@ -214,24 +143,10 @@ Map.renderFieldSkeletons = (field_specs) ->
 
     Map.zoomToBounds()
 
-Map.addPoint = (place, options) ->
-
+Map.addColoredPoint = (place, options) ->
+    options ||= {}
     color = Dispatcher.getColor(place.kind[0..3]).replace('#','')
-
-    marker = new google.maps.Marker
-        id: place.place_id
-        position: place.geometry.location
-        map: Map.google_map
-        zIndex: 0
-        title: place.name
-        icon: "/icons/place.svg?text=#{place.kind[0..3]}&color=#{color}"
-        labelClass: 'amarker'
-        title: place.name
-        optimized: true
-
-    marker.addListener 'click', Map.zoomAndCenterOn.bind(null, marker)
-
-    Map.markers.push marker
-    Map.bounds.extend marker.position
+    options.color = color
+    Map.addPoint place, options
 
 module.exports = Map
