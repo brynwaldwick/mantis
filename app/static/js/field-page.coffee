@@ -4,31 +4,15 @@ React = require 'react'
 {Link, hashHistory} = require 'react-router'
 fetch$ = require 'kefir-fetch'
 KefirBus = require 'kefir-bus'
-_Dispatcher = require './dispatcher'
+Dispatcher = require './dispatcher'
 
 Map = require './map'
 {LatLng} = require './common'
 ScrapeSummary = require './scrape-summary'
 PlaceSummary = require './place-summary'
 
-
 add = (a, b) -> a + b
 sum = (l) -> l.reduce(add, 0)
-
-Dispatcher =
-    loadField: (field_id) ->
-        fetch$ 'get', "/fields/#{field_id}/energies.json?start=0&end=10000"
-
-    getField: (field_id) ->
-        fetch$ 'get', "/fields/#{field_id}.json"
-
-    findFields: ->
-        fetch$ 'get', "/fields.json?start=0&end=10000"
-
-    findPlacesNear: (field_id, lat, lng) ->
-        fetch$ 'get', "/models/#{field_id}/n_closest/100.json?lat=#{lat}&lng=#{lng}"
-
-    results$: new KefirBus()
 
 FieldPage = React.createClass
     
@@ -41,7 +25,7 @@ FieldPage = React.createClass
     componentDidMount: ->
         Map.initializeMap()
         @findField()
-        _Dispatcher.map_clicks$.onValue (click) =>
+        Dispatcher.map_clicks$.onValue (click) =>
             hashHistory.push "/fields/#{@props.params.field_id}?lat=#{click.f.lat}&lng=#{click.f.lng}"
             {lat, lng} = @props.location.query
             @loadPlaces {lat, lng}
@@ -59,7 +43,7 @@ FieldPage = React.createClass
 
     foundPlaces: (places) ->
         places.map (r) ->
-            Map.addPoint r
+            Map.addColoredPoint r
         @setState {places}
 
     findField: (props) ->
@@ -74,7 +58,7 @@ FieldPage = React.createClass
 
     loadFieldEnergies: ->
         results$?.offValue @foundField
-        results$ = Dispatcher.loadField(@state.field.model_id)
+        results$ = Dispatcher.loadFieldEnergies(@state.field.model_id)
         results$.onValue @foundField
 
     gotField: (field) ->
@@ -83,6 +67,7 @@ FieldPage = React.createClass
             @loadFieldEnergies()
 
     foundField: (energies) ->
+        console.log energies
         selected = @state.selected
         Map.renderField energies, selected
         Map.google_map.addListener('click', (e) ->
@@ -265,7 +250,7 @@ ConcentrationGraph = React.createClass
                                     width={bar_w - @props.bar_gap}
                                     x={@x(point.x)-bar_w/2}
                                     height={@y(y.value)}
-                                    fill={if @state?.selected?.x == point.x then '#f00' else _Dispatcher.getColor(y.key)}
+                                    fill={if @state?.selected?.x == point.x then '#f00' else Dispatcher.getColor(y.key)}
                                 />
                             }
                         </g>

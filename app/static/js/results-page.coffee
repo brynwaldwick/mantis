@@ -48,7 +48,7 @@ ResultsPage = React.createClass
         Map.clearMarkers()
         Store.results = results
         results.map (r) ->
-            Map.addPoint r
+            Map.addColoredPoint r
         Dispatcher.results$.emit {test_jones: 'test'}
         # Map.setMarkers results
         keys = _.uniq results.map (r) -> r.key
@@ -128,7 +128,7 @@ PointComparer = React.createClass
             i = 0
             points.map (p) ->
                 shim = {geometry: {location: p}, place_id: i++}
-                Map.addPoint shim
+                Map.addColoredPoint shim
 
         _points = ProcessPoints points
         _points = _points.filter (p) -> p.min_distance < 25

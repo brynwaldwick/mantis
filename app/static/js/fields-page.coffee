@@ -6,14 +6,7 @@ KefirBus = require 'kefir-bus'
 Map = require './map'
 {LatLng} = require './common'
 
-Dispatcher =
-    loadField: (field_id) ->
-        fetch$ 'get', "/fields/#{field_id}.json?start=0&end=10000"
-
-    findFields: ->
-        fetch$ 'get', "/fields.json?start=0&end=10000"
-
-    results$: new KefirBus()
+Dispatcher = require './dispatcher'
 
 FieldsPage = React.createClass
     
@@ -40,6 +33,7 @@ FieldsPage = React.createClass
         @fields$.onValue @foundFields
 
     foundFields: (fields) ->
+        console.log fields
         Map.renderFieldSkeletons(fields)
         @setState {fields}
 
